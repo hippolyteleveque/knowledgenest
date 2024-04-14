@@ -33,3 +33,12 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+.DS_Store
+
+env*
+venv*
+
+*__pycache__*
+.ruff_cache/
+
+.prettierignore
