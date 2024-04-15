@@ -1,8 +1,3 @@
 export default async function Page() {
-    return (
-      <main>
-          Chat Page
-      </main>
-    );
-  }
-  
+  return <main>Chat Page</main>;
+}

@@ -41,7 +41,7 @@ export default function NavLinks() {
                   "flex items-center gap-x-3 py-2 px-2.5 text-sm text-gray-400 rounded-lg focus:outline-none focus:ring-1 focus:ring-gray-600",
                   {
                     "text-white bg-gray-700": pathname == link.href,
-                  }
+                  },
                 )}
               >
                 <LinkIcon className="flex-shrink-0 size-5" />
