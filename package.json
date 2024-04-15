@@ -12,10 +12,12 @@
     "format:staged": "prettier --write $(git diff --staged --name-only --diff-filter d | xargs)"
   },
   "dependencies": {
+    "@heroicons/react": "^2.1.3",
     "@types/node": "20.12.7",
     "@types/react": "18.2.78",
     "@types/react-dom": "18.2.25",
     "autoprefixer": "10.4.19",
+    "clsx": "^2.1.0",
     "eslint": "8.57.0",
     "eslint-config-next": "14.2.1",
     "next": "14.2.1",
