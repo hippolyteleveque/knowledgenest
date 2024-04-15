@@ -56,7 +56,7 @@ export default function Home() {
                   </div>
                 </div>
               </form>
-           </div>
+            </div>
           </div>
 
           <div className="mt-10 sm:mt-20">
