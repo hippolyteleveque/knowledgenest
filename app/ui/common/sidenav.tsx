@@ -10,7 +10,6 @@ export default function SideNav() {
             <span className="">KnowledgeNest</span>
           </Link>
         </div>
-
         <NavLinks />
       </div>
     </div>
