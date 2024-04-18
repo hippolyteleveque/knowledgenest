@@ -16,8 +16,28 @@ export async function signup(formData: FormData) {
   const { email, password } = validatedFields.data;
   const response = await fetch("http://localhost:3000/api/auth/signup", {
     method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
     body: JSON.stringify({ email, password }),
   });
 
   redirect("/login");
+}
+
+export async function login(formData: FormData) {
+  const validatedFields = AuthSchema.safeParse({
+    email: formData.get("email"),
+    password: formData.get("password"),
+  });
+  const { email, password } = validatedFields.data;
+  const authForm = new FormData();
+  authForm.append("username", email);
+  authForm.append("password", password);
+  const response = await fetch("http://localhost:3000/api/auth/login", {
+    method: "POST",
+    body: authForm,
+  });
+
+  redirect("/app");
 }
