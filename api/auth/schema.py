@@ -1,0 +1,10 @@
+from pydantic import BaseModel
+
+
+class SignupUserIn(BaseModel):
+    email: str
+    password: str
+
+
+class SignupUserOut(BaseModel):
+    email: str
