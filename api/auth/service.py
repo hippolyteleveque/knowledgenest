@@ -42,11 +42,8 @@ def verify_access_token(token: str) -> bool:
 
 def create_user(email: str, password: str, db: Session):
     hashed_password_binary = create_hash(password)
-    hashed_password = hashed_password_binary.decode('utf-8')
-    new_user = User(
-        email=email,
-        password=hashed_password
-    )
+    hashed_password = hashed_password_binary.decode("utf-8")
+    new_user = User(email=email, password=hashed_password)
     db.add(new_user)
     db.commit()
     db.refresh(new_user)
@@ -56,6 +53,7 @@ def create_user(email: str, password: str, db: Session):
 def get_user_by_email(email: str, db: Session):
     user = db.query(User).filter(User.email == email).first()
     if not user:
-        raise HTTPException(status_code=HTTP_404_NOT_FOUND,
-                            detail=f"User with email {email} not found")
+        raise HTTPException(
+            status_code=HTTP_404_NOT_FOUND, detail=f"User with email {email} not found"
+        )
     return user
