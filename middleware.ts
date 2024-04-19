@@ -13,6 +13,9 @@ export default async function middleware(req: NextRequest) {
   const isProtectedRoute = protectedRoutes.includes(path);
   const isPublicRoute = publicRoutes.includes(path);
 
+  if (isPublicRoute) {
+    return NextResponse.next();
+  }
   // 3. Decrypt the session from the cookie
   const cookie = cookies().get("jwtToken")?.value;
   // Call backend to verify that the cookie is correct
