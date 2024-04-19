@@ -18,9 +18,6 @@ SQLALCHEMY_DATABASE_URL = (
     f"postgresql+pg8000://{pg_user}:{pg_password}@{pg_host}/{pg_db}"
 )
 
-# SQLALCHEMY_DATABASE_URL = "postgresql://root:secret@localhost:5432/knowledgenest"
-# SQLALCHEMY_DATABASE_URL = "postgresql+pg8000://default:7uDUGB4PHeTR@ep-proud-union-a2x1hvx7-pooler.eu-central-1.aws.neon.tech:5432/verceldb"
-
 engine = create_engine(SQLALCHEMY_DATABASE_URL)
 
 SessionLocal = sessionmaker(bind=engine, autocommit=False, autoflush=False)
