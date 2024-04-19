@@ -2,6 +2,7 @@
 
 import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
+import { headers } from 'next/headers'
 import { z } from "zod";
 
 const AuthSchema = z.object({
@@ -15,7 +16,9 @@ export async function signup(formData: FormData) {
     password: formData.get("password"),
   });
   const { email, password } = validatedFields;
-  const response = await fetch("http://localhost:3000/api/auth/signup", {
+  const host = headers().get('x-forwarded-host')
+  const signupUrl = `http://${host}/api/auth/signup`
+  const response = await fetch(signupUrl, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -35,7 +38,9 @@ export async function login(formData: FormData) {
   const authForm = new FormData();
   authForm.append("username", email);
   authForm.append("password", password);
-  const response = await fetch("http://localhost:3000/api/auth/login", {
+  const host = headers().get('x-forwarded-host')
+  const loginUrl = `http://${host}/api/auth/login`
+  const response = await fetch(loginUrl, {
     method: "POST",
     body: authForm,
   });
