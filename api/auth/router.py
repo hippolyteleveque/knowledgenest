@@ -1,8 +1,9 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
-from .service import create_access_token
-from .schema import SignupUserIn, SignupUserOut
-
+from starlette.status import HTTP_200_OK, HTTP_404_NOT_FOUND
+from .service import create_access_token, verify_access_token
+from .schema import SignupUserIn, SignupUserOut, TokenIn
+from starlette.responses import Response
 
 router = APIRouter(prefix="/auth", tags=["authentication"])
 
@@ -38,3 +39,12 @@ def login(request: OAuth2PasswordRequestForm = Depends()):
 def signup(request: SignupUserIn):
     users.append((request.email, request.password))
     return request
+
+
+@router.post("/verify")
+def verify(request: TokenIn):
+    print(request)
+    if verify_access_token(request.token):
+        return Response(status_code=HTTP_200_OK)
+    else:
+        raise HTTPException(status_code=HTTP_404_NOT_FOUND, detail="Incorrect Token")

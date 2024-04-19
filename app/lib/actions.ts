@@ -1,6 +1,7 @@
 "use server";
 
 import { redirect } from "next/navigation";
+import { cookies } from "next/headers";
 import { z } from "zod";
 
 const AuthSchema = z.object({
@@ -39,5 +40,15 @@ export async function login(formData: FormData) {
     body: authForm,
   });
 
-  redirect("/app");
+  if (response.ok) {
+    const { access_token } = await response.json();
+    cookies().set("jwtToken", access_token, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "lax",
+      path: "/",
+    });
+    redirect("/app");
+  }
+
 }

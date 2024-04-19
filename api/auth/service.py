@@ -1,4 +1,5 @@
 from fastapi.security import OAuth2PasswordBearer
+import time
 from typing import Optional
 import os
 from datetime import datetime, timedelta
@@ -22,3 +23,12 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
     to_encode.update({"exp": expire})
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
+
+
+def verify_access_token(token: str) -> bool:
+    decoded_token = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+    print(decoded_token)
+    try:
+        return decoded_token["exp"] >= time.time()
+    except KeyError:
+        return False

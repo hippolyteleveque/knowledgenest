@@ -8,3 +8,7 @@ class SignupUserIn(BaseModel):
 
 class SignupUserOut(BaseModel):
     email: str
+
+
+class TokenIn(BaseModel):
+    token: str
