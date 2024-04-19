@@ -32,7 +32,6 @@ export default async function middleware(req: NextRequest) {
     return NextResponse.redirect(new URL("/login", req.nextUrl));
   }
 
-
   return NextResponse.next();
 }
 
