@@ -27,11 +27,11 @@ export async function signup(formData: FormData) {
 }
 
 export async function login(formData: FormData) {
-  const validatedFields = AuthSchema.safeParse({
+  const validatedFields = AuthSchema.parse({
     email: formData.get("email"),
     password: formData.get("password"),
   });
-  const { email, password } = validatedFields.data;
+  const { email, password } = validatedFields;
   const authForm = new FormData();
   authForm.append("username", email);
   authForm.append("password", password);

@@ -27,7 +27,6 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
 
 def verify_access_token(token: str) -> bool:
     decoded_token = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-    print(decoded_token)
     try:
         return decoded_token["exp"] >= time.time()
     except KeyError:
