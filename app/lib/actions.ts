@@ -10,11 +10,11 @@ const AuthSchema = z.object({
 });
 
 export async function signup(formData: FormData) {
-  const validatedFields = AuthSchema.safeParse({
+  const validatedFields = AuthSchema.parse({
     email: formData.get("email"),
     password: formData.get("password"),
   });
-  const { email, password } = validatedFields.data;
+  const { email, password } = validatedFields;
   const response = await fetch("http://localhost:3000/api/auth/signup", {
     method: "POST",
     headers: {
