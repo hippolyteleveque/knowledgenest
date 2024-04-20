@@ -17,3 +17,9 @@ class TokenIn(BaseModel):
 class UserIn(BaseModel):
     email: str
     password: str
+
+
+class UserBase(BaseModel):
+    id: int
+    email: str
+    password: str

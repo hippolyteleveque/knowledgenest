@@ -2,9 +2,8 @@
 
 import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
-import { headers } from "next/headers";
 import { z } from "zod";
-import { protocol } from "@/lib/utils";
+import { revalidatePath } from "next/cache";
 
 const AuthSchema = z.object({
   email: z.string(),
@@ -17,8 +16,7 @@ export async function signup(formData: FormData) {
     password: formData.get("password"),
   });
   const { email, password } = validatedFields;
-  const host = headers().get("x-forwarded-host");
-  const signupUrl = `${protocol}://${host}/api/auth/signup`;
+  const signupUrl = `${process.env.API_HOST}/api/auth/signup`;
   const response = await fetch(signupUrl, {
     method: "POST",
     headers: {
@@ -26,7 +24,7 @@ export async function signup(formData: FormData) {
     },
     body: JSON.stringify({ email, password }),
   });
-
+  // TODO wait for the response to get finish properly and handle errors
   redirect("/login");
 }
 
@@ -39,8 +37,7 @@ export async function login(formData: FormData) {
   const authForm = new FormData();
   authForm.append("username", email);
   authForm.append("password", password);
-  const host = headers().get("x-forwarded-host");
-  const loginUrl = `${protocol}://${host}/api/auth/login`;
+  const loginUrl = `${process.env.API_HOST}/api/auth/login`;
   const response = await fetch(loginUrl, {
     method: "POST",
     body: authForm,
@@ -67,5 +64,22 @@ export async function addArticle(formData: FormData) {
     articleUrl: formData.get("articleUrl"),
   });
   const { articleUrl } = validatedFields;
-  // Add API call to add the article
+  const addArticleUrl = `${process.env.API_HOST}/api/articles/`;
+  const bearerToken = cookies().get("jwtToken")?.value;
+  // TODO : clean up this abomination
+  if (!bearerToken) {
+    redirect("/login");
+  }
+  const response = await fetch(addArticleUrl, {
+    method: "POST",
+    body: JSON.stringify({ url: articleUrl }),
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${bearerToken}`,
+    },
+  });
+  if (!response.ok) {
+    // TODO put some error message
+  }
+  revalidatePath("/app");
 }
