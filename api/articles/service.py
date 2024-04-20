@@ -12,3 +12,7 @@ def process_new_article(url, user_id: int, db: Session):
     db.commit()
     db.refresh(new_article)
     return new_article
+
+
+def fetch_all_articles(user_id: int, db: Session):
+    return db.query(Article).filter(Article.user_id == user_id).all()
