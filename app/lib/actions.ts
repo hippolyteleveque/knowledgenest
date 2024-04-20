@@ -3,6 +3,7 @@
 import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
 import { z } from "zod";
+import { revalidatePath } from "next/cache";
 
 const AuthSchema = z.object({
   email: z.string(),
@@ -80,4 +81,5 @@ export async function addArticle(formData: FormData) {
   if (!response.ok) {
     // TODO put some error message
   }
+  revalidatePath("/app");
 }
