@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-// import { decrypt } from '@/app/lib/session'
 import { cookies } from "next/headers";
+import { headers } from "next/headers";
+import { protocol } from "./lib/utils";
 
 // 1. Specify protected and public routes
 const protectedRoutes = ["/app", "/app/chat", "/app/settings"];
@@ -19,8 +20,10 @@ export default async function middleware(req: NextRequest) {
   // 3. Decrypt the session from the cookie
   const cookie = cookies().get("jwtToken")?.value;
   // Call backend to verify that the cookie is correct
+  const host = headers().get("x-forwarded-host") 
+  const verifyUrl = `${protocol}://${host}/api/auth/verify`
   if (cookie) {
-    const verifyRequest = await fetch("http://localhost:3000/api/auth/verify", {
+    const verifyRequest = await fetch(verifyUrl, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

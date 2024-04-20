@@ -4,8 +4,8 @@ import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
 import { headers } from "next/headers";
 import { z } from "zod";
+import { protocol } from "@/lib/utils";
 
-const protocol = process.env.NODE_ENV == "development" ? "http" : "https";
 
 const AuthSchema = z.object({
   email: z.string(),
