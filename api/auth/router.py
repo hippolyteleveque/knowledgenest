@@ -15,8 +15,6 @@ from starlette.responses import Response
 
 router = APIRouter(prefix="/auth", tags=["authentication"])
 
-users = []
-
 
 @router.post("/login")
 def login(db: DbSession, request: OAuth2PasswordRequestForm = Depends()):
