@@ -5,6 +5,8 @@ import { cookies } from "next/headers";
 import { headers } from "next/headers";
 import { z } from "zod";
 
+const protocol = process.env.NODE_ENV == "development" ? "http" : "https";
+
 const AuthSchema = z.object({
   email: z.string(),
   password: z.string(),
@@ -17,7 +19,7 @@ export async function signup(formData: FormData) {
   });
   const { email, password } = validatedFields;
   const host = headers().get("x-forwarded-host");
-  const signupUrl = `http://${host}/api/auth/signup`;
+  const signupUrl = `${protocol}://${host}/api/auth/signup`;
   const response = await fetch(signupUrl, {
     method: "POST",
     headers: {
@@ -39,7 +41,7 @@ export async function login(formData: FormData) {
   authForm.append("username", email);
   authForm.append("password", password);
   const host = headers().get("x-forwarded-host");
-  const loginUrl = `http://${host}/api/auth/login`;
+  const loginUrl = `${protocol}://${host}/api/auth/login`;
   const response = await fetch(loginUrl, {
     method: "POST",
     body: authForm,
