@@ -23,7 +23,7 @@ export async function signup(formData: FormData) {
     },
     body: JSON.stringify({ email, password }),
   });
-
+  // TODO wait for the response to get finish properly and handle errors
   redirect("/login");
 }
 
