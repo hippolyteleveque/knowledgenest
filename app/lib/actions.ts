@@ -77,10 +77,7 @@ export async function addArticle(formData: FormData) {
       Authorization: `Bearer ${bearerToken}`,
     },
   });
-  if (response.ok) {
-    const { message } = await response.json();
-    console.log(message);
+  if (!response.ok) {
+    // TODO put some error message
   }
-
-  // Add API call to add the article
 }
