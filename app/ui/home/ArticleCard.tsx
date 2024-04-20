@@ -12,22 +12,28 @@ export function ArticleCard({ article }: { article: Article }) {
   const handleArticleDeletion = async () => await deleteArticleWithId();
   return (
     <Card>
-      <CardContent>
+      <CardContent className="flex justify-center p-4 pt-0">
         <Image
           src={article.imageUrl}
           alt={article.description}
-          width={200}
-          height={200}
+          width={400}
+          height={300}
         />
       </CardContent>
       <h4 className="scroll-m-20 text-sm font-semibold tracking-tight text-center">
         {article.title}
       </h4>
-      <CardFooter className="flex justify-center py-5 w-50">
-        <Button variant="outline">
+      <CardFooter className="flex justify-between py-5 w-full">
+        <Button className="w-24">
           <a href={article.url}>View</a>
         </Button>
-        <Button onClick={handleArticleDeletion}>Delete</Button>
+        <Button
+          variant="outline"
+          onClick={handleArticleDeletion}
+          className="w-24"
+        >
+          Delete
+        </Button>
       </CardFooter>
     </Card>
   );
