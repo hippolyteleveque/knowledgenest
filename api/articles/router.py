@@ -11,5 +11,5 @@ router = APIRouter(prefix="/articles", tags=["articles"])
 def add_article(request: ArticleUrlIn, current_user: CurrentUser):
     # TODO : add article in the db
     return {
-        "message": f"Article {request.url} has been added for user {current_user.email}"
+        "message": f"Article {request.url}  has been added for user {current_user.email}"
     }
