@@ -6,7 +6,6 @@ import { headers } from "next/headers";
 import { z } from "zod";
 import { protocol } from "@/lib/utils";
 
-
 const AuthSchema = z.object({
   email: z.string(),
   password: z.string(),

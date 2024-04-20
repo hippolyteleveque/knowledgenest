@@ -6,4 +6,5 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 // TODO : replace protocol and host handling a bit more properly
-export const protocol = process.env.NODE_ENV == "development" ? "http" : "https";
+export const protocol =
+  process.env.NODE_ENV == "development" ? "http" : "https";

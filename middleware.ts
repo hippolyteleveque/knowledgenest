@@ -20,8 +20,8 @@ export default async function middleware(req: NextRequest) {
   // 3. Decrypt the session from the cookie
   const cookie = cookies().get("jwtToken")?.value;
   // Call backend to verify that the cookie is correct
-  const host = headers().get("x-forwarded-host") 
-  const verifyUrl = `${protocol}://${host}/api/auth/verify`
+  const host = headers().get("x-forwarded-host");
+  const verifyUrl = `${protocol}://${host}/api/auth/verify`;
   if (cookie) {
     const verifyRequest = await fetch(verifyUrl, {
       method: "POST",
