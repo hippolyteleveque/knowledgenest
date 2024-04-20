@@ -1,11 +1,15 @@
-import * as React from "react";
+"use client";
 
+import * as React from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import Image from "next/image";
 import { Article } from "@/app/lib/definitions";
+import { deleteArticle } from "@/app/lib/actions";
 
 export function ArticleCard({ article }: { article: Article }) {
+  const deleteArticleWithId = deleteArticle.bind(null, article.id);
+  const handleArticleDeletion = async () => await deleteArticleWithId();
   return (
     <Card>
       <CardContent>
@@ -23,6 +27,7 @@ export function ArticleCard({ article }: { article: Article }) {
         <Button variant="outline">
           <a href={article.url}>View</a>
         </Button>
+        <Button onClick={handleArticleDeletion}>Delete</Button>
       </CardFooter>
     </Card>
   );
