@@ -6,6 +6,7 @@ class ArticleUrlIn(BaseModel):
 
 
 class ArticleOut(BaseModel):
+    id: int
     url: str
     imageUrl: str
     description: str
