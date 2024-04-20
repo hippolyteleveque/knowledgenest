@@ -1,15 +1,15 @@
 from fastapi import APIRouter
 
 from api.articles.schema import ArticleUrlIn
+from api.articles.service import process_new_article
 from api.auth.service import CurrentUser
+from api.database import DbSession
 
 
 router = APIRouter(prefix="/articles", tags=["articles"])
 
 
 @router.post("/")
-def add_article(request: ArticleUrlIn, current_user: CurrentUser):
-    # TODO : add article in the db
-    return {
-        "message": f"Article {request.url}  has been added for user {current_user.email}"
-    }
+def add_article(request: ArticleUrlIn, current_user: CurrentUser, db: DbSession):
+    new_article = process_new_article(request.url, current_user.id, db)
+    return new_article

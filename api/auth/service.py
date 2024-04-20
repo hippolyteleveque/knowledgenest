@@ -63,7 +63,7 @@ def get_user_by_email(email: str, db: Session):
 
 def get_current_user(
     db: DbSession, token: Annotated[str, Depends(oauth2_scheme)]
-) -> UserBase:
+) -> User:
     credentials_exception = HTTPException(
         status_code=HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
