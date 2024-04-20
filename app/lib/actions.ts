@@ -57,3 +57,15 @@ export async function login(formData: FormData) {
     redirect("/app");
   }
 }
+
+const ArticleSchema = z.object({
+  articleUrl: z.string(),
+});
+
+export async function addArticle(formData: FormData) {
+  const validatedFields = ArticleSchema.parse({
+    articleUrl: formData.get("articleUrl"),
+  });
+  const { articleUrl } = validatedFields;
+  // Add API call to add the article
+}
