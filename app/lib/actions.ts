@@ -83,3 +83,22 @@ export async function addArticle(formData: FormData) {
   }
   revalidatePath("/app");
 }
+
+export async function deleteArticle(articleId: number) {
+  const bearerToken = cookies().get("jwtToken")?.value;
+  // TODO : clean up this abomination
+  if (!bearerToken) {
+    redirect("/login");
+  }
+  const deletionUrl = `${process.env.API_HOST}/api/articles/${articleId}`;
+  const response = await fetch(deletionUrl, {
+    method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${bearerToken}`,
+    },
+  });
+  if (!response.ok) {
+    // TODO put some error handling logic
+  }
+  revalidatePath("/app");
+}

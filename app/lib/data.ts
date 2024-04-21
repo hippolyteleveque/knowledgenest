@@ -1,8 +1,9 @@
 import { cookies } from "next/headers";
 
-export async function fetchArticles() {
+export async function fetchArticles(page: number, itemsPerPage: number) {
   const bearerToken = cookies().get("jwtToken")?.value;
-  const articlesUrl = `${process.env.API_HOST}/api/articles`;
+  const offset = (page - 1) * itemsPerPage;
+  const articlesUrl = `${process.env.API_HOST}/api/articles?offset=${offset}&limit=${itemsPerPage}`;
   const response = await fetch(articlesUrl, {
     method: "GET",
     headers: {
@@ -10,9 +11,10 @@ export async function fetchArticles() {
     },
   });
   if (response.ok) {
-    const fetchedArticles = await response.json();
-    return fetchedArticles;
+    // const { articles, numArticles } = await response.json();
+    const { articles, articles_count: numArticles } = await response.json();
+    return { articles, numArticles };
   }
   // TODO: error handling
-  return [];
+  return { articles: [], numArticles: 0 };
 }
