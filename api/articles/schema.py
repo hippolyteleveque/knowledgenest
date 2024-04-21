@@ -1,3 +1,4 @@
+from typing import List
 from pydantic import BaseModel
 
 
@@ -11,3 +12,8 @@ class ArticleOut(BaseModel):
     imageUrl: str
     description: str
     title: str
+
+
+class ArticlesOut(BaseModel):
+    articles: List[ArticleOut]
+    articles_count: int

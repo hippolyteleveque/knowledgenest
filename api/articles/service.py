@@ -16,8 +16,16 @@ def process_new_article(url, user_id: int, db: Session):
     return new_article
 
 
-def fetch_all_articles(user_id: int, db: Session):
-    return db.query(Article).filter(Article.user_id == user_id).all()
+def fetch_articles(user_id: int, db: Session, offset: int = 0, limit: int = 10):
+    articles_count = db.query(Article).count()
+    articles = (
+        db.query(Article)
+        .filter(Article.user_id == user_id)
+        .offset(offset)
+        .limit(limit)
+        .all()
+    )
+    return dict(articles_count=articles_count, articles=articles)
 
 
 def delete_article_by_id(article_id: int, user_id: int, db: Session):

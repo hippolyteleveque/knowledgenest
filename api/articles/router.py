@@ -1,11 +1,10 @@
-from typing import List
 from fastapi import APIRouter, HTTPException
 from starlette.status import HTTP_204_NO_CONTENT
 
-from api.articles.schema import ArticleOut, ArticleUrlIn
+from api.articles.schema import ArticleOut, ArticleUrlIn, ArticlesOut
 from api.articles.service import (
     delete_article_by_id,
-    fetch_all_articles,
+    fetch_articles,
     process_new_article,
 )
 from api.auth.service import CurrentUser
@@ -15,10 +14,12 @@ from api.database import DbSession
 router = APIRouter(prefix="/articles", tags=["articles"])
 
 
-@router.get("/", response_model=List[ArticleOut])
-def get_articles(current_user: CurrentUser, db: DbSession):
+@router.get("/", response_model=ArticlesOut)
+def get_articles(
+    current_user: CurrentUser, db: DbSession, offset: int = 0, limit: int = 10
+):
     # TODO handle pagination
-    all_articles = fetch_all_articles(current_user.id, db)
+    all_articles = fetch_articles(current_user.id, db, offset, limit)
     return all_articles
 
 
