@@ -43,3 +43,4 @@ venv*
 .ruff_cache/
 
 .prettierignore
+notebooks/
