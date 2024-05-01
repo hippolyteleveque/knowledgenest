@@ -1,14 +1,16 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, BackgroundTasks
 from starlette.status import HTTP_204_NO_CONTENT
 
 from api.articles.schema import ArticleOut, ArticleUrlIn, ArticlesOut
 from api.articles.service import (
     delete_article_by_id,
+    embed_and_ingest_article,
     fetch_articles,
     process_new_article,
 )
 from api.auth.service import CurrentUser
 from api.database import DbSession
+from api.vector_database import VectorDbSession
 
 
 router = APIRouter(prefix="/articles", tags=["articles"])
@@ -24,8 +26,10 @@ def get_articles(
 
 
 @router.post("/", response_model=ArticleOut)
-def add_article(request: ArticleUrlIn, current_user: CurrentUser, db: DbSession):
+def add_article(request: ArticleUrlIn, current_user: CurrentUser, db: DbSession, index: VectorDbSession, background_tasks: BackgroundTasks):
     new_article = process_new_article(request.url, current_user.id, db)
+    # Chunk and embed the article as a background task
+    background_tasks.add_task(embed_and_ingest_article, new_article, index)
     return new_article
 
 

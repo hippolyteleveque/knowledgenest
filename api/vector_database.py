@@ -1,6 +1,9 @@
 from pinecone import Pinecone
 from pinecone import ServerlessSpec
 from dotenv import load_dotenv
+from fastapi import Depends
+from pinecone.data.index import Index
+from typing import Annotated
 import time
 import os
 
@@ -39,3 +42,6 @@ def get_vector_db():
         yield index
     finally:
         pass
+
+
+VectorDbSession = Annotated[Index, Depends(get_vector_db)]
