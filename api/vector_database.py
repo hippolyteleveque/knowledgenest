@@ -16,7 +16,7 @@ SIM_METRIC = "dotproduct"
 
 pc = Pinecone(api_key=PINECONE_API_KEY)
 
-spec = ServerlessSpec(cloud="aws", region="eu-west-1")
+spec = ServerlessSpec(cloud="aws", region="us-east-1")
 
 existing_indexes = [index_info["name"] for index_info in pc.list_indexes()]
 
