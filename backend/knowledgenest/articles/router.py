@@ -1,17 +1,17 @@
 from fastapi import APIRouter, HTTPException, BackgroundTasks
 from starlette.status import HTTP_204_NO_CONTENT
 
-from api.articles.schema import ArticleOut, ArticleUrlIn, ArticlesOut
-from api.articles.service import (
+from knowledgenest.articles.schema import ArticleOut, ArticleUrlIn, ArticlesOut
+from knowledgenest.articles.service import (
     delete_article_by_id,
     delete_article_chunks_by_id,
     embed_and_ingest_article,
     fetch_articles,
     process_new_article,
 )
-from api.auth.service import CurrentUser
-from api.database import DbSession
-from api.vector_database import VectorDbSession
+from knowledgenest.auth.service import CurrentUser
+from knowledgenest.database import DbSession
+from knowledgenest.vector_database import VectorDbSession
 
 
 router = APIRouter(prefix="/articles", tags=["articles"])

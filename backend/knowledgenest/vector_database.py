@@ -7,7 +7,7 @@ from typing import Annotated
 import time
 import os
 
-load_dotenv(dotenv_path="api.env")
+load_dotenv(dotenv_path="knowledgenest.env")
 
 PINECONE_API_KEY = os.getenv("PINECONE_API_KEY")
 INDEX_NAME = "knowledgenest"

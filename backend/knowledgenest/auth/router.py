@@ -2,15 +2,15 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 from starlette.status import HTTP_200_OK, HTTP_404_NOT_FOUND
 
-from api.auth.utils import verify_hash
-from api.database import DbSession
-from api.auth.service import (
+from knowledgenest.auth.utils import verify_hash
+from knowledgenest.database import DbSession
+from knowledgenest.auth.service import (
     create_access_token,
     create_user,
     get_user_by_email,
     verify_access_token,
 )
-from api.auth.schema import SignupUserIn, SignupUserOut, TokenIn
+from knowledgenest.auth.schema import SignupUserIn, SignupUserOut, TokenIn
 from starlette.responses import Response
 
 router = APIRouter(prefix="/auth", tags=["authentication"])

@@ -7,7 +7,7 @@ from typing import Annotated
 import os
 from dotenv import load_dotenv
 
-load_dotenv(dotenv_path="api.env")
+load_dotenv(dotenv_path="knowledgenest.env")
 
 pg_host = os.getenv("POSTGRES_HOST")
 pg_user = os.getenv("POSTGRES_USER")

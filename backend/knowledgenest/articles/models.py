@@ -1,7 +1,7 @@
 from sqlalchemy import Column, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
 
-from api.database import Base
+from knowledgenest.database import Base
 
 
 class Article(Base):

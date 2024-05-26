@@ -1,7 +1,10 @@
 from sqlalchemy.orm.session import Session
 from fastapi import HTTPException
-from api.articles.models import Article
-from api.articles.utils import convert_properties_to_fields, extract_meta_properties
+from knowledgenest.articles.models import Article
+from knowledgenest.articles.utils import (
+    convert_properties_to_fields,
+    extract_meta_properties,
+)
 from starlette.status import HTTP_404_NOT_FOUND
 from langchain_community.document_loaders.web_base import WebBaseLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
@@ -9,7 +12,7 @@ from langchain_openai import OpenAIEmbeddings
 from dotenv import load_dotenv
 import os
 
-load_dotenv(dotenv_path="api.env")
+load_dotenv(dotenv_path="knowledgenest.env")
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 EMBEDDING_MODEL = "text-embedding-ada-002"
 
