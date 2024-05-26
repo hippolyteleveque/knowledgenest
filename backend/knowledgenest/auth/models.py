@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, String
 
-from api.database import Base
+from knowledgenest.database import Base
 
 
 class User(Base):

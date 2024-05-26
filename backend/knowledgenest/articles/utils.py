@@ -2,7 +2,7 @@ from typing import Dict
 import requests
 from bs4 import BeautifulSoup
 
-from api.articles.models import Article
+from knowledgenest.articles.models import Article
 
 
 def extract_meta_properties(url: str) -> Dict[str, str]:

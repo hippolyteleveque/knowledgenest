@@ -9,10 +9,10 @@ from jose.exceptions import ExpiredSignatureError
 from sqlalchemy.orm.session import Session
 from starlette.status import HTTP_401_UNAUTHORIZED, HTTP_404_NOT_FOUND
 
-from api.auth.models import User
-from api.auth.schema import UserBase
-from api.auth.utils import create_hash
-from api.database import DbSession
+from knowledgenest.auth.models import User
+from knowledgenest.auth.schema import UserBase
+from knowledgenest.auth.utils import create_hash
+from knowledgenest.database import DbSession
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 

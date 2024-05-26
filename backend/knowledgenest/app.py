@@ -1,7 +1,7 @@
 from fastapi import FastAPI
-from api.auth.router import router as auth_router
-from api.articles.router import router as articles_router
-from api.database import Base, engine
+from knowledgenest.auth.router import router as auth_router
+from knowledgenest.articles.router import router as articles_router
+from knowledgenest.database import Base, engine
 
 app = FastAPI(root_path="/api")
 
