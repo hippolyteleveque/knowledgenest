@@ -11,4 +11,3 @@ app.include_router(articles_router)
 @app.get("/api")
 async def root():
     return {"message": "Hello World"}
-

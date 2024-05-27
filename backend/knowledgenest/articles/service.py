@@ -9,10 +9,8 @@ from starlette.status import HTTP_404_NOT_FOUND
 from langchain_community.document_loaders.web_base import WebBaseLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_openai import OpenAIEmbeddings
-from dotenv import load_dotenv
 import os
 
-load_dotenv(dotenv_path="knowledgenest.env")
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 EMBEDDING_MODEL = "text-embedding-ada-002"
 
