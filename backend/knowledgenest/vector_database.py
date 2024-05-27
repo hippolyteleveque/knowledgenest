@@ -1,13 +1,11 @@
 from pinecone import Pinecone
 from pinecone import ServerlessSpec
-from dotenv import load_dotenv
 from fastapi import Depends
 from pinecone.data.index import Index
 from typing import Annotated
 import time
 import os
 
-load_dotenv(dotenv_path="knowledgenest.env")
 
 PINECONE_API_KEY = os.getenv("PINECONE_API_KEY")
 INDEX_NAME = "knowledgenest"

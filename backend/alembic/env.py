@@ -21,6 +21,7 @@ if config.config_file_name is not None:
 from knowledgenest.auth.models import User
 from knowledgenest.articles.models import Article
 from knowledgenest.database import Base
+
 target_metadata = Base.metadata
 
 PG_HOST = os.getenv("POSTGRES_HOST")
@@ -70,13 +71,11 @@ def run_migrations_online() -> None:
         config.get_section(config.config_ini_section, {}),
         prefix="sqlalchemy.",
         poolclass=pool.NullPool,
-        url=url
+        url=url,
     )
 
     with connectable.connect() as connection:
-        context.configure(
-            connection=connection, target_metadata=target_metadata
-        )
+        context.configure(connection=connection, target_metadata=target_metadata)
 
         with context.begin_transaction():
             context.run_migrations()
