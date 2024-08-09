@@ -102,3 +102,22 @@ export async function deleteArticle(articleId: number) {
   }
   revalidatePath("/app");
 }
+
+export async function sendChatMessage(message: string) {
+  const bearerToken = cookies().get("jwtToken")?.value;
+  // // TODO : clean up this abomination
+  if (!bearerToken) {
+    redirect("/login");
+  }
+  const chatUrl = `${process.env.API_HOST}/api/chat/`;
+  const response = await fetch(chatUrl, {
+    method: "POST",
+    body: JSON.stringify({ message }),
+    headers: {
+      Authorization: `Bearer ${bearerToken}`,
+      "Content-Type": "application/json",
+    },
+  });
+  const resp = await response.json();
+  return resp.message;
+}
