@@ -2,23 +2,23 @@
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
-import { startConversation } from "@/app/lib/actions";
-import { usePathname, useRouter } from "next/navigation";
+import { sendChatMessage } from "@/app/lib/actions";
 
-export default function Page() {
-  const [currUserMsg, setCurrUserMsg] = useState("");
-  const [messages, setMessages] = useState<any>([]);
-  const pathname = usePathname();
-  const { replace } = useRouter();
+type ChatProps = {
+  messages: any[];
+  conversationId: string;
+};
+
+export default function Chat(props: ChatProps) {
+  const [currUserMsg, setCurrUserMsg] = useState("")
+  const [messages, setMessages] = useState<any>(props.messages);
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
     setMessages((msgs) => [...msgs, { type: "human", content: currUserMsg }]);
     setCurrUserMsg("");
-    const { message, conversationId } = await startConversation(currUserMsg);
-    console.log(message);
-    setMessages((msgs) => [...msgs, { type: "ai", content: message }]);
-    replace(`${pathname}/${conversationId}`);
+    const msg = await sendChatMessage(currUserMsg, props.conversationId);
+    setMessages((msgs) => [...msgs, { type: "ai", content: msg }]);
   };
 
   const formatMessage = (msg: any) => {
