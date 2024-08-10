@@ -18,3 +18,32 @@ export async function fetchArticles(page: number, itemsPerPage: number) {
   // TODO: error handling
   return { articles: [], numArticles: 0 };
 }
+
+export async function fetchConversations() {
+  const conversationsUrl = `${process.env.API_HOST}/api/chat`;
+  const response = await fetch(conversationsUrl, {
+    method: "GET",
+  });
+  if (response.ok) {
+    // const { articles, numArticles } = await response.json();
+    const conversations = await response.json();
+    console.log(conversations);
+    return conversations;
+  }
+  // TODO: error handling
+  return { conversations: [] };
+}
+
+export async function fetchConversation(id: string) {
+  const conversationUrl = `${process.env.API_HOST}/api/chat/${id}`;
+  const response = await fetch(conversationUrl, {
+    method: "GET",
+  });
+  if (response.ok) {
+    // const { articles, numArticles } = await response.json();
+    const conversation = await response.json();
+    return conversation;
+  }
+  // TODO: error handling
+  return [];
+}
