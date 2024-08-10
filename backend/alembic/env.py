@@ -20,7 +20,7 @@ if config.config_file_name is not None:
 # target_metadata = mymodel.Base.metadata
 from knowledgenest.auth.models import User
 from knowledgenest.articles.models import Article
-from knowledgenest.chat.models import ChatMessage
+from knowledgenest.chat.models import ChatMessage, ChatConversation
 from knowledgenest.database import Base
 
 
