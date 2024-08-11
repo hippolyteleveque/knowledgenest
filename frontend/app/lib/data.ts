@@ -27,7 +27,6 @@ export async function fetchConversations() {
   if (response.ok) {
     // const { articles, numArticles } = await response.json();
     const conversations = await response.json();
-    console.log(conversations);
     return conversations;
   }
   // TODO: error handling
