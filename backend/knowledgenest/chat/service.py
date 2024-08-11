@@ -24,8 +24,7 @@ def fetch_conversation(conversation_id: str, db: Session) -> List[ChatMessage]:
 
 def fetch_conversations(db: Session) -> List[ChatConversation]:
     conversations = (
-        db.query(ChatConversation).order_by(
-            asc(ChatConversation.created_at)).all()
+        db.query(ChatConversation).order_by(asc(ChatConversation.created_at)).all()
     )
     return conversations
 

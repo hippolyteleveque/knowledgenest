@@ -18,3 +18,4 @@ class FirstChatMessageOut(BaseModel):
 
 class ChatConversationOut(BaseModel):
     id: UUID4
+    name: str

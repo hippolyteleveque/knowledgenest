@@ -15,7 +15,7 @@ OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 EMBEDDING_MODEL = "text-embedding-ada-002"
 
 
-def process_new_article(url, user_id: str, db: Session):
+def process_new_article(url: str, user_id: str, db: Session):
     # First version, we only create the article in base,
     properties = extract_meta_properties(url)
     fields = convert_properties_to_fields(properties)

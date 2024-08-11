@@ -13,6 +13,10 @@ class ChatConversation(Base):
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     created_at = Column(DateTime)
 
+    @property
+    def name(self):
+        return self.messages[0].content[:25]
+
     # relationships
     messages = relationship("ChatMessage", back_populates="conversation")
 
