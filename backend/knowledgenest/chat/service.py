@@ -1,6 +1,6 @@
 import os
 from typing import List
-from sqlalchemy import asc
+from sqlalchemy import asc, desc
 from sqlalchemy.orm.session import Session
 from langchain_openai import ChatOpenAI
 from langchain_core.output_parsers import StrOutputParser
@@ -24,7 +24,7 @@ def fetch_conversation(conversation_id: str, db: Session) -> List[ChatMessage]:
 
 def fetch_conversations(db: Session) -> List[ChatConversation]:
     conversations = (
-        db.query(ChatConversation).order_by(asc(ChatConversation.created_at)).all()
+        db.query(ChatConversation).order_by(desc(ChatConversation.created_at)).all()
     )
     return conversations
 

@@ -17,7 +17,7 @@ export default async function ChatNav() {
                 className="flex-1 block p-2 overflow-hidden text-sm truncate transition-colors rounded-md whitespace-nowrap hover:bg-muted/50"
                 key={conv.id}
               >
-                {conv.id}
+                {conv.name}
               </Link>
             );
           })}
