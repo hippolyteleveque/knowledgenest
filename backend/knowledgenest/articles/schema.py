@@ -1,4 +1,5 @@
 from typing import List
+from uuid import UUID
 from pydantic import BaseModel
 
 
@@ -7,7 +8,7 @@ class ArticleUrlIn(BaseModel):
 
 
 class ArticleOut(BaseModel):
-    id: int
+    id: UUID
     url: str
     imageUrl: str
     description: str

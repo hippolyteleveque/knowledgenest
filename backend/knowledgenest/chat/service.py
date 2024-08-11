@@ -1,6 +1,6 @@
 import os
 from typing import List
-from sqlalchemy import asc
+from sqlalchemy import asc, desc
 from sqlalchemy.orm.session import Session
 from langchain_openai import ChatOpenAI
 from langchain_core.output_parsers import StrOutputParser
@@ -12,16 +12,7 @@ OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 MODEL = "gpt-4o-mini"
 
 
-def send_llm_message(message: str) -> str:
-    """Simple llm invocation of OPENAI llm"""
-
-    llm = ChatOpenAI(model=MODEL, api_key=OPENAI_API_KEY)
-    chain = llm | StrOutputParser()
-    resp = chain.invoke(message)
-    return resp
-
-
-def fetch_conversation(conversation_id: int, db: Session) -> List[ChatMessage]:
+def fetch_conversation(conversation_id: str, db: Session) -> List[ChatMessage]:
     db_conversation = (
         db.query(ChatMessage)
         .filter(ChatMessage.conversation_id == conversation_id)
@@ -33,12 +24,12 @@ def fetch_conversation(conversation_id: int, db: Session) -> List[ChatMessage]:
 
 def fetch_conversations(db: Session) -> List[ChatConversation]:
     conversations = (
-        db.query(ChatConversation).order_by(asc(ChatConversation.created_at)).all()
+        db.query(ChatConversation).order_by(desc(ChatConversation.created_at)).all()
     )
     return conversations
 
 
-def chat(new_message: str, conversation_id: int, db: Session) -> str:
+def chat(new_message: str, conversation_id: str, db: Session) -> str:
     """Continue the chat with the user"""
     add_human_message(new_message, conversation_id, db)
     db_conversation = fetch_conversation(conversation_id, db)
@@ -50,7 +41,7 @@ def chat(new_message: str, conversation_id: int, db: Session) -> str:
     return resp
 
 
-def add_human_message(content: str, conversation_id: int, db: Session):
+def add_human_message(content: str, conversation_id: str, db: Session):
     new_message = ChatMessage(
         content=content,
         type="human",
@@ -63,7 +54,7 @@ def add_human_message(content: str, conversation_id: int, db: Session):
     return new_message
 
 
-def add_ai_message(content: str, conversation_id: int, db: Session):
+def add_ai_message(content: str, conversation_id: str, db: Session):
     new_message = ChatMessage(
         content=content,
         type="ai",

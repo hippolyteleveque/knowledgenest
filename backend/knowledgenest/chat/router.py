@@ -29,13 +29,14 @@ def create_convesation(request: ChatMessageIn, db: DbSession):
 def get_conversations(db: DbSession):
     conversations = fetch_conversations(db)
     formatted_conversations = [
-        ChatConversationOut(id=conversation.id) for conversation in conversations
+        ChatConversationOut(id=conversation.id, name=conversation.name)
+        for conversation in conversations
     ]
     return formatted_conversations
 
 
 @router.get("/{id}", response_model=List[ChatMessageOut])
-def get_conversation(id: int, db: DbSession):
+def get_conversation(id: str, db: DbSession):
     messages = fetch_conversation(id, db)
     formatted_messages = [
         ChatMessageOut(message=msg.content, type=msg.type) for msg in messages
@@ -44,6 +45,6 @@ def get_conversation(id: int, db: DbSession):
 
 
 @router.post("/{id}", response_model=ChatMessageOut)
-def send_chat(id: int, request: ChatMessageIn, db: DbSession):
+def send_chat(id: str, request: ChatMessageIn, db: DbSession):
     message = chat(request.message, id, db)
     return ChatMessageOut(message=message, type="ai")

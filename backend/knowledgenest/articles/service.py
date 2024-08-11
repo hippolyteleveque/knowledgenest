@@ -15,7 +15,7 @@ OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 EMBEDDING_MODEL = "text-embedding-ada-002"
 
 
-def process_new_article(url, user_id: int, db: Session):
+def process_new_article(url: str, user_id: str, db: Session):
     # First version, we only create the article in base,
     properties = extract_meta_properties(url)
     fields = convert_properties_to_fields(properties)
@@ -26,7 +26,7 @@ def process_new_article(url, user_id: int, db: Session):
     return new_article
 
 
-def fetch_articles(user_id: int, db: Session, offset: int = 0, limit: int = 10):
+def fetch_articles(user_id: str, db: Session, offset: int = 0, limit: int = 10):
     articles_count = db.query(Article).count()
     articles = (
         db.query(Article)
@@ -38,7 +38,7 @@ def fetch_articles(user_id: int, db: Session, offset: int = 0, limit: int = 10):
     return dict(articles_count=articles_count, articles=articles)
 
 
-def delete_article_by_id(article_id: int, user_id: int, db: Session):
+def delete_article_by_id(article_id: str, user_id: str, db: Session):
     article = (
         db.query(Article)
         .filter(Article.id == article_id, Article.user_id == user_id)
@@ -77,7 +77,7 @@ def process_doc(doc, article: Article, i: int):
     return pc_obj
 
 
-def delete_article_chunks_by_id(article_id: int, index):
+def delete_article_chunks_by_id(article_id: str, index):
     for ids in index.list(prefix=str(article_id)):
         index.delete(ids=ids)
     return True
