@@ -42,7 +42,7 @@ def add_article(
 
 @router.delete("/{id}")
 def delete_article(
-    id: int, current_user: CurrentUser, db: DbSession, index: VectorDbSession
+    id: str, current_user: CurrentUser, db: DbSession, index: VectorDbSession
 ):
     _ = delete_article_by_id(id, current_user.id, db)
     # You need to wait before it is actually processed before effectively deleting the vectors

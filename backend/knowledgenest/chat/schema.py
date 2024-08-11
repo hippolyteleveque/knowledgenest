@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, UUID4
 
 
 class ChatMessageIn(BaseModel):
@@ -13,8 +13,8 @@ class ChatMessageOut(BaseModel):
 class FirstChatMessageOut(BaseModel):
     message: str
     type: str
-    conversation_id: int
+    conversation_id: UUID4
 
 
 class ChatConversationOut(BaseModel):
-    id: int
+    id: UUID4
