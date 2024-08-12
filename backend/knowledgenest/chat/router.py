@@ -21,7 +21,8 @@ router = APIRouter(prefix="/chat", tags=["chat"])
 @router.post("/", response_model=FirstChatMessageOut)
 def create_convesation(request: ChatMessageIn, db: DbSession):
     conversation = add_conversation(db)
-    message = chat(request.message, conversation.id, db)
+    conversation_id = str(conversation.id)
+    message = chat(request.message, conversation_id, db)
     return dict(message=message, type="ai", conversation_id=conversation.id)
 
 
