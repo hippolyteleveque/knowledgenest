@@ -5,14 +5,11 @@ from knowledgenest.articles.utils import (
     convert_properties_to_fields,
     extract_meta_properties,
 )
+from knowledgenest.lib import EMBEDDING_MODEL
 from starlette.status import HTTP_404_NOT_FOUND
 from langchain_community.document_loaders.web_base import WebBaseLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_openai import OpenAIEmbeddings
-import os
-
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-EMBEDDING_MODEL = "text-embedding-ada-002"
 
 
 def process_new_article(url: str, user_id: str, db: Session):

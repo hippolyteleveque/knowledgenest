@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import UUID4, BaseModel
 
 
 class SignupUserIn(BaseModel):
@@ -20,6 +20,6 @@ class UserIn(BaseModel):
 
 
 class UserBase(BaseModel):
-    id: int
+    id: UUID4
     email: str
     password: str

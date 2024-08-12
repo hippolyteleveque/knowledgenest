@@ -1,15 +1,12 @@
-import os
 from typing import List
 from sqlalchemy import asc, desc
 from sqlalchemy.orm.session import Session
 from langchain_openai import ChatOpenAI
 from langchain_core.output_parsers import StrOutputParser
 from knowledgenest.chat.models import ChatConversation, ChatMessage
+from knowledgenest.lib import OPENAI_API_KEY, MODEL
 
 from datetime import datetime
-
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-MODEL = "gpt-4o-mini"
 
 
 def fetch_conversation(conversation_id: str, db: Session) -> List[ChatMessage]:
