@@ -1,4 +1,5 @@
 import { cookies } from "next/headers";
+import { ChatConversation, ChatMessage } from "./definitions";
 
 export async function fetchArticles(page: number, itemsPerPage: number) {
   const bearerToken = cookies().get("jwtToken")?.value;
@@ -19,7 +20,7 @@ export async function fetchArticles(page: number, itemsPerPage: number) {
   return { articles: [], numArticles: 0 };
 }
 
-export async function fetchConversations() {
+export async function fetchConversations(): Promise<ChatConversation[]> {
   const conversationsUrl = `${process.env.API_HOST}/api/chat`;
   const response = await fetch(conversationsUrl, {
     method: "GET",
@@ -30,10 +31,10 @@ export async function fetchConversations() {
     return conversations;
   }
   // TODO: error handling
-  return { conversations: [] };
+  return [];
 }
 
-export async function fetchConversation(id: string) {
+export async function fetchConversation(id: string): Promise<ChatMessage[]> {
   const conversationUrl = `${process.env.API_HOST}/api/chat/${id}`;
   const response = await fetch(conversationUrl, {
     method: "GET",

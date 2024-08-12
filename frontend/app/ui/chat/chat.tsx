@@ -3,30 +3,33 @@ import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { sendChatMessage } from "@/app/lib/actions";
+import { ChatMessage } from "@/app/lib/definitions";
 
 type ChatProps = {
-  messages: any[];
+  messages: ChatMessage[];
   conversationId: string;
 };
 
 export default function Chat(props: ChatProps) {
-  const [currUserMsg, setCurrUserMsg] = useState("")
-  const [messages, setMessages] = useState<any>(props.messages);
+  const [currUserMsg, setCurrUserMsg] = useState<string | null>(null);
+  const [messages, setMessages] = useState<ChatMessage[]>(props.messages);
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
-    setMessages((msgs) => [...msgs, { type: "human", content: currUserMsg }]);
-    setCurrUserMsg("");
-    const msg = await sendChatMessage(currUserMsg, props.conversationId);
-    setMessages((msgs) => [...msgs, { type: "ai", content: msg }]);
+    if (currUserMsg) {
+      setMessages((msgs) => [...msgs, { type: "human", message: currUserMsg }]);
+      setCurrUserMsg("");
+      const msg = await sendChatMessage(currUserMsg, props.conversationId);
+      setMessages((msgs) => [...msgs, { type: "ai", message: msg }]);
+    }
   };
 
-  const formatMessage = (msg: any) => {
+  const formatMessage = (msg: ChatMessage) => {
     if (msg.type === "human") {
       return (
         <div className="flex flex-row-reverse items-start gap-4">
           <div className="rounded-lg bg-gray-900 p-4 text-sm text-gray-50 dark:bg-gray-50 dark:text-gray-900">
-            <p>{msg.content}</p>
+            <p>{msg.message}</p>
           </div>
         </div>
       );
@@ -34,7 +37,7 @@ export default function Chat(props: ChatProps) {
       return (
         <div className="flex items-start gap-4">
           <div className="rounded-lg bg-gray-100 p-4 text-sm dark:bg-gray-800">
-            <p>{msg.content}</p>
+            <p>{msg.message}</p>
           </div>
         </div>
       );
@@ -57,7 +60,7 @@ export default function Chat(props: ChatProps) {
               className="flex-1"
               id="message"
               name="message"
-              value={currUserMsg}
+              value={currUserMsg ? currUserMsg : ""}
               onChange={(e) => setCurrUserMsg(e.target?.value)}
             />
             <Button type="submit">Send</Button>
