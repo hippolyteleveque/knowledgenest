@@ -1,23 +1,26 @@
 "use client";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { FormEvent, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { startConversation } from "@/app/lib/actions";
 import { usePathname, useRouter } from "next/navigation";
+import { ChatMessage } from "@/app/lib/definitions";
 
 export default function Page() {
-  const [currUserMsg, setCurrUserMsg] = useState("");
-  const [messages, setMessages] = useState<any>([]);
+  const [currUserMsg, setCurrUserMsg] = useState<string | null>(null);
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
   const pathname = usePathname();
   const { replace } = useRouter();
 
-  const handleSubmit = async (e: any) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    setMessages((msgs) => [...msgs, { type: "human", content: currUserMsg }]);
-    setCurrUserMsg("");
-    const { message, conversationId } = await startConversation(currUserMsg);
-    setMessages((msgs) => [...msgs, { type: "ai", content: message }]);
-    replace(`${pathname}/${conversationId}`);
+    if (currUserMsg) {
+      setMessages((msgs) => [...msgs, { type: "human", message: currUserMsg }]);
+      setCurrUserMsg(null);
+      const { message, conversationId } = await startConversation(currUserMsg);
+      setMessages((msgs) => [...msgs, { type: "ai", message: message }]);
+      replace(`${pathname}/${conversationId}`);
+    }
   };
 
   const formatMessage = (msg: any) => {
@@ -56,7 +59,7 @@ export default function Page() {
               className="flex-1"
               id="message"
               name="message"
-              value={currUserMsg}
+              value={currUserMsg ? currUserMsg : ""}
               onChange={(e) => setCurrUserMsg(e.target?.value)}
             />
             <Button type="submit">Send</Button>

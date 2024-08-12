@@ -1,4 +1,3 @@
-import { useRouter } from "next/navigation";
 import Chat from "@/app/ui/chat/chat";
 import { fetchConversation } from "@/app/lib/data";
 
@@ -7,8 +6,8 @@ export default async function Page({ params }: { params: { id: string } }) {
   messages = messages.map((msg) => {
     return {
       type: msg.type,
-      content: msg.message,
+      message: msg.message,
     };
   });
-  return <Chat messages={messages} conversationId={params.id}/>;
+  return <Chat messages={messages} conversationId={params.id} />;
 }

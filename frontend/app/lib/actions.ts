@@ -84,7 +84,7 @@ export async function addArticle(formData: FormData) {
   revalidatePath("/app");
 }
 
-export async function deleteArticle(articleId: number) {
+export async function deleteArticle(articleId: string) {
   const bearerToken = cookies().get("jwtToken")?.value;
   // TODO : clean up this abomination
   if (!bearerToken) {
