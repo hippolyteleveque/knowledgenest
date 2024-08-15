@@ -4,7 +4,7 @@ import { ChatConversation, ChatMessage } from "./definitions";
 export async function fetchArticles(page: number, itemsPerPage: number) {
   const bearerToken = cookies().get("jwtToken")?.value;
   const offset = (page - 1) * itemsPerPage;
-  const articlesUrl = `${process.env.API_HOST}/api/v1/articles?offset=${offset}&limit=${itemsPerPage}`;
+  const articlesUrl = `${process.env.API_HOST}/api/v1/articles/?offset=${offset}&limit=${itemsPerPage}`;
   const response = await fetch(articlesUrl, {
     method: "GET",
     headers: {
@@ -35,7 +35,7 @@ export async function fetchConversations(): Promise<ChatConversation[]> {
 }
 
 export async function fetchConversation(id: string): Promise<ChatMessage[]> {
-  const conversationUrl = `${process.env.API_HOST}/api/v1/chat/${id}`;
+  const conversationUrl = `${process.env.API_HOST}/api/v1/chat/${id}/`;
   const response = await fetch(conversationUrl, {
     method: "GET",
   });
