@@ -35,7 +35,7 @@ export async function fetchConversations(): Promise<ChatConversation[]> {
 }
 
 export async function fetchConversation(id: string): Promise<ChatMessage[]> {
-  const conversationUrl = `${process.env.API_HOST}/api/v1/chat/${id}/`;
+  const conversationUrl = `${process.env.API_HOST}/api/v1/chat/${id}`;
   const response = await fetch(conversationUrl, {
     method: "GET",
   });
