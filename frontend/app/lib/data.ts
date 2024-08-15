@@ -21,7 +21,7 @@ export async function fetchArticles(page: number, itemsPerPage: number) {
 }
 
 export async function fetchConversations(): Promise<ChatConversation[]> {
-  const conversationsUrl = `${process.env.API_HOST}/api/v1/chat`;
+  const conversationsUrl = `${process.env.API_HOST}/api/v1/chat/`;
   const response = await fetch(conversationsUrl, {
     method: "GET",
   });
