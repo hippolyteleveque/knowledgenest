@@ -16,7 +16,7 @@ export async function signup(formData: FormData) {
     password: formData.get("password"),
   });
   const { email, password } = validatedFields;
-  const signupUrl = `${process.env.API_HOST}/api/auth/signup`;
+  const signupUrl = `${process.env.API_HOST}/api/v1/auth/signup`;
   const response = await fetch(signupUrl, {
     method: "POST",
     headers: {
@@ -37,7 +37,7 @@ export async function login(formData: FormData) {
   const authForm = new FormData();
   authForm.append("username", email);
   authForm.append("password", password);
-  const loginUrl = `${process.env.API_HOST}/api/auth/login`;
+  const loginUrl = `${process.env.API_HOST}/api/v1/auth/login`;
   const response = await fetch(loginUrl, {
     method: "POST",
     body: authForm,
@@ -64,7 +64,7 @@ export async function addArticle(formData: FormData) {
     articleUrl: formData.get("articleUrl"),
   });
   const { articleUrl } = validatedFields;
-  const addArticleUrl = `${process.env.API_HOST}/api/articles/`;
+  const addArticleUrl = `${process.env.API_HOST}/api/v1/articles/`;
   const bearerToken = cookies().get("jwtToken")?.value;
   // TODO : clean up this abomination
   if (!bearerToken) {
@@ -90,7 +90,7 @@ export async function deleteArticle(articleId: string) {
   if (!bearerToken) {
     redirect("/login");
   }
-  const deletionUrl = `${process.env.API_HOST}/api/articles/${articleId}`;
+  const deletionUrl = `${process.env.API_HOST}/api/v1/articles/${articleId}`;
   const response = await fetch(deletionUrl, {
     method: "DELETE",
     headers: {
@@ -109,7 +109,7 @@ export async function sendChatMessage(message: string, conversationId: string) {
   if (!bearerToken) {
     redirect("/login");
   }
-  let chatUrl = `${process.env.API_HOST}/api/chat/`;
+  let chatUrl = `${process.env.API_HOST}/api/v1/chat/`;
   if (conversationId) {
     chatUrl += conversationId.toString();
   }
@@ -132,7 +132,7 @@ export async function startConversation(message: string) {
   if (!bearerToken) {
     redirect("/login");
   }
-  const chatUrl = `${process.env.API_HOST}/api/chat/`;
+  const chatUrl = `${process.env.API_HOST}/api/v1/chat/`;
   const response = await fetch(chatUrl, {
     method: "POST",
     body: JSON.stringify({ message }),
