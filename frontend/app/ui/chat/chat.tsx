@@ -1,34 +1,35 @@
 "use client";
 import { Button } from "@/components/ui/button";
-import { FormEvent, useState } from "react";
+import { useState } from "react";
 import { Input } from "@/components/ui/input";
-import { startConversation } from "@/app/lib/actions";
-import { usePathname, useRouter } from "next/navigation";
+import { sendChatMessage } from "@/app/lib/actions";
 import { ChatMessage } from "@/app/lib/definitions";
 
-export default function Page() {
-  const [currUserMsg, setCurrUserMsg] = useState<string | null>(null);
-  const [messages, setMessages] = useState<ChatMessage[]>([]);
-  const pathname = usePathname();
-  const { replace } = useRouter();
+type ChatProps = {
+  messages: ChatMessage[];
+  conversationId: string;
+};
 
-  const handleSubmit = async (e: FormEvent) => {
+export default function Chat(props: ChatProps) {
+  const [currUserMsg, setCurrUserMsg] = useState<string | null>(null);
+  const [messages, setMessages] = useState<ChatMessage[]>(props.messages);
+
+  const handleSubmit = async (e: any) => {
     e.preventDefault();
     if (currUserMsg) {
       setMessages((msgs) => [...msgs, { type: "human", message: currUserMsg }]);
-      setCurrUserMsg(null);
-      const { message, conversationId } = await startConversation(currUserMsg);
-      setMessages((msgs) => [...msgs, { type: "ai", message: message }]);
-      replace(`${pathname}/${conversationId}`);
+      setCurrUserMsg("");
+      const msg = await sendChatMessage(currUserMsg, props.conversationId);
+      setMessages((msgs) => [...msgs, { type: "ai", message: msg }]);
     }
   };
 
-  const formatMessage = (msg: any) => {
+  const formatMessage = (msg: ChatMessage) => {
     if (msg.type === "human") {
       return (
         <div className="flex flex-row-reverse items-start gap-4">
           <div className="rounded-lg bg-gray-900 p-4 text-sm text-gray-50 dark:bg-gray-50 dark:text-gray-900">
-            <p>{msg.content}</p>
+            <p>{msg.message}</p>
           </div>
         </div>
       );
@@ -36,7 +37,7 @@ export default function Page() {
       return (
         <div className="flex items-start gap-4">
           <div className="rounded-lg bg-gray-100 p-4 text-sm dark:bg-gray-800">
-            <p>{msg.content}</p>
+            <p>{msg.message}</p>
           </div>
         </div>
       );

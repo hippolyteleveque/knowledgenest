@@ -1,7 +1,19 @@
 export type Article = {
-  id: number;
+  id: string;
   url: string;
   description: string;
   imageUrl: string;
   title: string;
+};
+
+export type ChatMessage = {
+  id?: string;
+  message: string;
+  chatConversationId?: string;
+  type: string;
+};
+
+export type ChatConversation = {
+  id: string;
+  name: string;
 };

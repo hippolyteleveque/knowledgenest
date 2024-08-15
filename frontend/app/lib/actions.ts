@@ -84,7 +84,7 @@ export async function addArticle(formData: FormData) {
   revalidatePath("/app");
 }
 
-export async function deleteArticle(articleId: number) {
+export async function deleteArticle(articleId: string) {
   const bearerToken = cookies().get("jwtToken")?.value;
   // TODO : clean up this abomination
   if (!bearerToken) {
@@ -101,4 +101,47 @@ export async function deleteArticle(articleId: number) {
     // TODO put some error handling logic
   }
   revalidatePath("/app");
+}
+
+export async function sendChatMessage(message: string, conversationId: string) {
+  const bearerToken = cookies().get("jwtToken")?.value;
+  // // TODO : clean up this abomination
+  if (!bearerToken) {
+    redirect("/login");
+  }
+  let chatUrl = `${process.env.API_HOST}/api/chat/`;
+  if (conversationId) {
+    chatUrl += conversationId.toString();
+  }
+  const response = await fetch(chatUrl, {
+    method: "POST",
+    body: JSON.stringify({ message }),
+    headers: {
+      Authorization: `Bearer ${bearerToken}`,
+      "Content-Type": "application/json",
+    },
+  });
+  const resp = await response.json();
+  revalidatePath("/app/chat");
+  return resp.message;
+}
+
+export async function startConversation(message: string) {
+  const bearerToken = cookies().get("jwtToken")?.value;
+  // // TODO : clean up this abomination
+  if (!bearerToken) {
+    redirect("/login");
+  }
+  const chatUrl = `${process.env.API_HOST}/api/chat/`;
+  const response = await fetch(chatUrl, {
+    method: "POST",
+    body: JSON.stringify({ message }),
+    headers: {
+      Authorization: `Bearer ${bearerToken}`,
+      "Content-Type": "application/json",
+    },
+  });
+  const resp = await response.json();
+  revalidatePath("/app/chat");
+  return { message: resp.message, conversationId: resp.conversation_id };
 }

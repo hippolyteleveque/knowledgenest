@@ -22,7 +22,7 @@ def get_articles(
     current_user: CurrentUser, db: DbSession, offset: int = 0, limit: int = 10
 ):
     # TODO handle pagination
-    all_articles = fetch_articles(current_user.id, db, offset, limit)
+    all_articles = fetch_articles(str(current_user.id), db, offset, limit)
     return all_articles
 
 
@@ -34,7 +34,7 @@ def add_article(
     index: VectorDbSession,
     background_tasks: BackgroundTasks,
 ):
-    new_article = process_new_article(request.url, current_user.id, db)
+    new_article = process_new_article(request.url, str(current_user.id), db)
     # Chunk and embed the article as a background task
     background_tasks.add_task(embed_and_ingest_article, new_article, index)
     return new_article
@@ -42,9 +42,9 @@ def add_article(
 
 @router.delete("/{id}")
 def delete_article(
-    id: int, current_user: CurrentUser, db: DbSession, index: VectorDbSession
+    id: str, current_user: CurrentUser, db: DbSession, index: VectorDbSession
 ):
-    _ = delete_article_by_id(id, current_user.id, db)
+    _ = delete_article_by_id(id, str(current_user.id), db)
     # You need to wait before it is actually processed before effectively deleting the vectors
     delete_article_chunks_by_id(id, index)
     return HTTPException(status_code=HTTP_204_NO_CONTENT)
