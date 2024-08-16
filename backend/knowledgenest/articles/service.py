@@ -5,11 +5,11 @@ from knowledgenest.articles.utils import (
     convert_properties_to_fields,
     extract_meta_properties,
 )
-from knowledgenest.lib import EMBEDDING_MODEL
+from knowledgenest.lib import MISTRAL_EMBEDDING_MODEL, MISTRALAI_API_KEY
 from starlette.status import HTTP_404_NOT_FOUND
 from langchain_community.document_loaders.web_base import WebBaseLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
-from langchain_openai import OpenAIEmbeddings
+from langchain_mistralai import MistralAIEmbeddings
 
 
 def process_new_article(url: str, user_id: str, db: Session):
@@ -61,12 +61,14 @@ def embed_and_ingest_article(article: Article, index):
 
 
 def process_doc(doc, article: Article, i: int):
-    embeddings = OpenAIEmbeddings(model=EMBEDDING_MODEL)
+    embeddings = MistralAIEmbeddings(
+        model=MISTRAL_EMBEDDING_MODEL, api_key=MISTRALAI_API_KEY
+    )
     pc_obj = dict()
     pc_obj["metadata"] = dict(
         **doc.metadata,
-        user_id=article.user_id,
-        article_id=article.id,
+        user_id=str(article.user_id),
+        article_id=str(article.id),
         text=doc.page_content,
     )
     pc_obj["values"] = embeddings.embed_documents([doc.page_content])[0]

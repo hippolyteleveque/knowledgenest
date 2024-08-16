@@ -9,7 +9,7 @@ import os
 
 PINECONE_API_KEY = os.getenv("PINECONE_API_KEY")
 INDEX_NAME = "knowledgenest"
-EMBEDDING_MODEL_DIM = 1536
+EMBEDDING_MODEL_DIM = 1024
 SIM_METRIC = "dotproduct"
 
 pc = Pinecone(api_key=PINECONE_API_KEY)
