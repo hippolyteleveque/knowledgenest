@@ -1,12 +1,10 @@
 from typing import List
 from sqlalchemy import asc, desc
 from sqlalchemy.orm.session import Session
-from langchain_mistralai import ChatMistralAI
-from langchain_core.output_parsers import StrOutputParser
+
 
 from knowledgenest.chat.models import ChatConversation, ChatMessage
-from knowledgenest.lib import MISTRAL_LLM_MODEL, MISTRALAI_API_KEY
-
+from knowledgenest.chat.utils import get_chain
 from datetime import datetime
 
 
@@ -32,9 +30,8 @@ def chat(new_message: str, conversation_id: str, db: Session) -> str:
     add_human_message(new_message, conversation_id, db)
     db_conversation = fetch_conversation(conversation_id, db)
     messages = [msg.convert_to_langchain() for msg in db_conversation]
-    llm = ChatMistralAI(model_name=MISTRAL_LLM_MODEL, api_key=MISTRALAI_API_KEY)
-    chain = llm | StrOutputParser()
-    resp = chain.invoke(messages)
+    chain = get_chain()
+    resp = chain.invoke(dict(messages=messages))
     add_ai_message(resp, conversation_id, db)
     return resp
 

@@ -7,3 +7,5 @@ import os
 MISTRALAI_API_KEY = os.getenv("MISTRALAI_API_KEY")
 MISTRAL_EMBEDDING_MODEL = "mistral-embed"
 MISTRAL_LLM_MODEL = "open-mistral-nemo"
+PINECONE_API_KEY = os.getenv("PINECONE_API_KEY")
+PINECONE_INDEX_NAME = "knowledgenest"
