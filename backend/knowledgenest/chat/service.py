@@ -47,6 +47,22 @@ def chat(new_message: str, conversation_id: str, user_id: str, db: Session) -> s
     return resp
 
 
+async def chat_stream(
+    new_message: str, conversation_id: str, user_id: str, db: Session
+):
+    """Continue the chat with the user"""
+    add_human_message(new_message, conversation_id, db)
+    db_conversation = fetch_conversation(conversation_id, user_id, db)
+    messages = [msg.convert_to_langchain() for msg in db_conversation]
+    chain = get_chain(str(user_id))
+    resp = chain.astream(dict(messages=messages))
+    total_message = ""
+    async for chunk in resp:
+        total_message += chunk
+        yield chunk
+    add_ai_message(total_message, conversation_id, db)
+
+
 def add_human_message(content: str, conversation_id: str, db: Session):
     new_message = ChatMessage(
         content=content,

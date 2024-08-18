@@ -46,7 +46,6 @@ export async function login(formData: FormData) {
   if (response.ok) {
     const { access_token } = await response.json();
     cookies().set("jwtToken", access_token, {
-      httpOnly: true,
       secure: true,
       sameSite: "lax",
       path: "/",
