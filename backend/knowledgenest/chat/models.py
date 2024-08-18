@@ -18,6 +18,8 @@ class ChatConversation(Base):
         return self.messages[0].content[:25]
 
     # relationships
+    user_id = Column(UUID(as_uuid=True), ForeignKey("users.id"))
+    user = relationship("User", back_populates="conversations")
     messages = relationship("ChatMessage", back_populates="conversation")
 
 
@@ -30,7 +32,8 @@ class ChatMessage(Base):
     type = Column(String)
 
     # relationships
-    conversation_id = Column(UUID(as_uuid=True), ForeignKey("chatconversation.id"))
+    conversation_id = Column(
+        UUID(as_uuid=True), ForeignKey("chatconversation.id"))
     conversation = relationship("ChatConversation", back_populates="messages")
 
     def convert_to_langchain(self):
