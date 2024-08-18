@@ -1,7 +1,10 @@
 import Link from "next/link";
 
 import NavLinks from "@/app/ui/common/nav-links";
-export default function SideNav() {
+import { Button } from "@/components/ui/button";
+import { logout } from "@/app/lib/actions";
+
+export default async function SideNav() {
   return (
     <div className="border-r bg-muted/40 md:block">
       <div className="flex h-full max-h-screen flex-col gap-2">
@@ -11,6 +14,11 @@ export default function SideNav() {
           </Link>
         </div>
         <NavLinks />
+        <form className="justify-center mb-5 flex" action={logout}>
+          <Button className="w-40" type="submit">
+            Logout
+          </Button>
+        </form>
       </div>
     </div>
   );
