@@ -41,7 +41,7 @@ def chat(new_message: str, conversation_id: str, user_id: str, db: Session) -> s
     add_human_message(new_message, conversation_id, db)
     db_conversation = fetch_conversation(conversation_id, user_id, db)
     messages = [msg.convert_to_langchain() for msg in db_conversation]
-    chain = get_chain()
+    chain = get_chain(str(user_id))
     resp = chain.invoke(dict(messages=messages))
     add_ai_message(resp, conversation_id, db)
     return resp
