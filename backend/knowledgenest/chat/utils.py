@@ -52,3 +52,4 @@ def format_docs(docs):
 
 def parse_retriever_input(params: Dict):
     return params["messages"][-1].content
+
