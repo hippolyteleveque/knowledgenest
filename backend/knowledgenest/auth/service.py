@@ -66,12 +66,12 @@ def curr_user(db: DbSession, token: str) -> User:
         status_code=HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
         headers={"WWW-Authenticate": "Bearer"},
-        )
+    )
     try:
-            payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-            username: str = payload["username"]
-            if username is None:
-                raise credentials_exception
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        username: str = payload["username"]
+        if username is None:
+            raise credentials_exception
     except JWTError:
         raise credentials_exception
     user = get_user_by_email(username, db)

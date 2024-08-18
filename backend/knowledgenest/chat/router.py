@@ -1,9 +1,7 @@
-import time
 from typing import List
 from fastapi import APIRouter, WebSocket
 from knowledgenest.database import DbSession
 from knowledgenest.auth.service import CurrentUser, curr_user
-import asyncio
 from knowledgenest.chat.schema import (
     ChatConversationOut,
     ChatMessageIn,
@@ -67,7 +65,7 @@ async def websocket_endpoint(id: str, token: str, db: DbSession, websocket: WebS
         while True:
             message = await websocket.receive_text()
             await websocket.send_text("<START>")
-            async for token in chat_stream(message, id, str(user.id),  db):
+            async for token in chat_stream(message, id, str(user.id), db):
                 await websocket.send_text(token)
 
     except Exception as e:
