@@ -1,6 +1,6 @@
 "use client";
 import { Button } from "@/components/ui/button";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Input } from "@/components/ui/input";
 import { ChatMessage } from "@/app/lib/definitions";
 import Cookies from "js-cookie";
@@ -13,11 +13,14 @@ type ChatProps = {
 export default function Chat(props: ChatProps) {
   const [currUserMsg, setCurrUserMsg] = useState<string | null>(null);
   const [messages, setMessages] = useState<ChatMessage[]>(props.messages);
-  const [socket, setSocket] = useState<any>(null);
+  const [socket, setSocket] = useState<WebSocket | null>(null);
+  const chatRef = useRef(null);
 
   useEffect(() => {
+    if (chatRef.current) {
+      chatRef.current.scrollTop = chatRef.current.scrollHeight;
+    }
     const token = Cookies.get("jwtToken");
-    console.log(token);
     const ws = new WebSocket(
       `ws://localhost:8000/api/v1/chat/${props.conversationId}/ws?token=${token}`
     );
@@ -42,6 +45,9 @@ export default function Chat(props: ChatProps) {
           return [...previousMessages, newAiMessage];
         });
       }
+      if (chatRef.current) {
+        chatRef.current.scrollTop = chatRef.current.scrollHeight;
+      }
     };
 
     ws.onclose = () => {};
@@ -49,23 +55,17 @@ export default function Chat(props: ChatProps) {
     return () => {
       ws.close();
     };
-  }, []);
+  }, [props.conversationId]);
 
-  // const handleSubmit = async (e: any) => {
-  //   e.preventDefault();
-  //   if (currUserMsg) {
-  //     setMessages((msgs) => [...msgs, { type: "human", message: currUserMsg }]);
-  //     setCurrUserMsg("");
-  //     const msg = await sendChatMessage(currUserMsg, props.conversationId);
-  //     setMessages((msgs) => [...msgs, { type: "ai", message: msg }]);
-  //   }
-  // };
   const handleSubmit = async (e: any) => {
     e.preventDefault();
-    if (currUserMsg) {
+    if (currUserMsg && socket) {
       socket.send(currUserMsg);
       setMessages((msgs) => [...msgs, { type: "human", message: currUserMsg }]);
       setCurrUserMsg("");
+    }
+    if (chatRef.current) {
+      chatRef.current.scrollTop = chatRef.current.scrollHeight;
     }
   };
 
@@ -94,7 +94,7 @@ export default function Chat(props: ChatProps) {
   return (
     <main>
       <div className="flex h-screen flex-col flex-1 pt-5">
-        <main className="flex-1 overflow-auto">
+        <main className="flex-1 overflow-auto" ref={chatRef}>
           <div className="mx-auto max-w-3xl space-y-4 p-4">{msgs}</div>
         </main>
         <div className="border-t bg-gray-100 rounded-lg px-4 py-4 my-10 jdark:bg-gray-900">
