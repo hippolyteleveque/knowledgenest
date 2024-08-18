@@ -55,6 +55,14 @@ export async function login(formData: FormData) {
   }
 }
 
+export async function logout() {
+  const cookieStore = cookies();
+  if (cookieStore.has("jwtToken")) {
+    cookieStore.delete("jwtToken");
+  }
+  redirect("/login");
+}
+
 const ArticleSchema = z.object({
   articleUrl: z.string(),
 });

@@ -1,6 +1,7 @@
 from typing import List
 from fastapi import APIRouter
 from knowledgenest.database import DbSession
+from knowledgenest.auth.service import CurrentUser
 from knowledgenest.chat.schema import (
     ChatConversationOut,
     ChatMessageIn,
@@ -19,16 +20,18 @@ router = APIRouter(prefix="/chat", tags=["chat"])
 
 
 @router.post("/", response_model=FirstChatMessageOut)
-def create_convesation(request: ChatMessageIn, db: DbSession):
-    conversation = add_conversation(db)
+def create_convesation(
+    request: ChatMessageIn, current_user: CurrentUser, db: DbSession
+):
+    conversation = add_conversation(current_user.id, db)
     conversation_id = str(conversation.id)
-    message = chat(request.message, conversation_id, db)
+    message = chat(request.message, conversation_id, current_user.id, db)
     return dict(message=message, type="ai", conversation_id=conversation.id)
 
 
 @router.get("/", response_model=List[ChatConversationOut])
-def get_conversations(db: DbSession):
-    conversations = fetch_conversations(db)
+def get_conversations(current_user: CurrentUser, db: DbSession):
+    conversations = fetch_conversations(current_user.id, db)
     formatted_conversations = [
         ChatConversationOut(id=conversation.id, name=conversation.name)
         for conversation in conversations
@@ -37,8 +40,8 @@ def get_conversations(db: DbSession):
 
 
 @router.get("/{id}", response_model=List[ChatMessageOut])
-def get_conversation(id: str, db: DbSession):
-    messages = fetch_conversation(id, db)
+def get_conversation(id: str, current_user: CurrentUser, db: DbSession):
+    messages = fetch_conversation(id, current_user.id, db)
     formatted_messages = [
         ChatMessageOut(message=msg.content, type=msg.type) for msg in messages
     ]
@@ -46,6 +49,8 @@ def get_conversation(id: str, db: DbSession):
 
 
 @router.post("/{id}", response_model=ChatMessageOut)
-def send_chat(id: str, request: ChatMessageIn, db: DbSession):
-    message = chat(request.message, id, db)
+def send_chat(
+    id: str, request: ChatMessageIn, current_user: CurrentUser, db: DbSession
+):
+    message = chat(request.message, id, current_user.id, db)
     return ChatMessageOut(message=message, type="ai")

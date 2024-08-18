@@ -21,9 +21,13 @@ export async function fetchArticles(page: number, itemsPerPage: number) {
 }
 
 export async function fetchConversations(): Promise<ChatConversation[]> {
+  const bearerToken = cookies().get("jwtToken")?.value;
   const conversationsUrl = `${process.env.API_HOST}/api/v1/chat/`;
   const response = await fetch(conversationsUrl, {
     method: "GET",
+    headers: {
+      Authorization: `Bearer ${bearerToken}`,
+    },
   });
   if (response.ok) {
     // const { articles, numArticles } = await response.json();
@@ -35,9 +39,13 @@ export async function fetchConversations(): Promise<ChatConversation[]> {
 }
 
 export async function fetchConversation(id: string): Promise<ChatMessage[]> {
+  const bearerToken = cookies().get("jwtToken")?.value;
   const conversationUrl = `${process.env.API_HOST}/api/v1/chat/${id}`;
   const response = await fetch(conversationUrl, {
     method: "GET",
+    headers: {
+      Authorization: `Bearer ${bearerToken}`,
+    },
   });
   if (response.ok) {
     // const { articles, numArticles } = await response.json();

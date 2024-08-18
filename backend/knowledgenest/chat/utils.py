@@ -18,7 +18,7 @@ SYSTEM_PROMPT = """You are a useful assistant that answers politey to users ques
             you primarily based on the below context when it is useful :\n\n{context}"""
 
 
-def get_chain():
+def get_chain(user_id: str):
     prompt = ChatPromptTemplate.from_messages(
         [
             ("system", SYSTEM_PROMPT),
@@ -31,7 +31,9 @@ def get_chain():
         model=MISTRAL_EMBEDDING_MODEL, api_key=MISTRALAI_API_KEY
     )
     vector_store = PineconeVectorStore(index=index, embedding=embeddings)
-    retriever = vector_store.as_retriever(search_kwargs=dict(k=3))
+    retriever = vector_store.as_retriever(
+        search_kwargs=dict(k=3, filter=dict(user_id=user_id))
+    )
     chain = (
         dict(
             context=parse_retriever_input | retriever | format_docs,
