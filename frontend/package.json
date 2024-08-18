@@ -23,6 +23,8 @@
     "clsx": "^2.1.0",
     "eslint": "8.57.0",
     "eslint-config-next": "14.2.1",
+    "isomorphic-ws": "^5.0.0",
+    "js-cookie": "^3.0.5",
     "lucide": "^0.370.0",
     "lucide-react": "^0.370.0",
     "next": "14.2.1",
