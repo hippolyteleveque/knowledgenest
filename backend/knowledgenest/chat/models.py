@@ -17,6 +17,10 @@ class ChatConversation(Base):
     def name(self):
         return self.messages[0].content[:25]
 
+    @property
+    def ordered_messages(self):
+        return sorted(self.messages, key=lambda x: x.created_at)
+
     # relationships
     user_id = Column(UUID(as_uuid=True), ForeignKey("users.id"))
     user = relationship("User", back_populates="conversations")
@@ -32,8 +36,7 @@ class ChatMessage(Base):
     type = Column(String)
 
     # relationships
-    conversation_id = Column(
-        UUID(as_uuid=True), ForeignKey("chatconversation.id"))
+    conversation_id = Column(UUID(as_uuid=True), ForeignKey("chatconversation.id"))
     conversation = relationship("ChatConversation", back_populates="messages")
 
     def convert_to_langchain(self):
