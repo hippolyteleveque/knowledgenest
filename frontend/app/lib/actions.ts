@@ -150,5 +150,5 @@ export async function startConversation(message: string) {
   });
   const resp = await response.json();
   revalidatePath("/app/chat");
-  return { message: resp.message, conversationId: resp.conversation_id };
+  return resp; 
 }

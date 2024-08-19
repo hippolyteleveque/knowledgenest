@@ -8,13 +8,14 @@ import Cookies from "js-cookie";
 type ChatProps = {
   messages: ChatMessage[];
   conversationId: string;
+  requestResponse: boolean;
 };
 
 export default function Chat(props: ChatProps) {
   const [currUserMsg, setCurrUserMsg] = useState<string | null>(null);
   const [messages, setMessages] = useState<ChatMessage[]>(props.messages);
   const [socket, setSocket] = useState<WebSocket | null>(null);
-  const chatRef = useRef(null);
+  const chatRef = useRef<any>(null);
 
   useEffect(() => {
     if (chatRef.current) {
@@ -26,7 +27,11 @@ export default function Chat(props: ChatProps) {
     );
     setSocket(ws);
 
-    ws.onopen = () => {};
+    ws.onopen = () => {
+      if (props.requestResponse) {
+        ws.send(props.messages[props.messages.length - 1].message)
+      }
+    };
 
     ws.onmessage = (event) => {
       if (event.data === "<START>") {
@@ -55,7 +60,7 @@ export default function Chat(props: ChatProps) {
     return () => {
       ws.close();
     };
-  }, [props.conversationId]);
+  }, [props.conversationId, props.requestResponse, props.messages]);
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();

@@ -9,5 +9,7 @@ export default async function Page({ params }: { params: { id: string } }) {
       message: msg.message,
     };
   });
-  return <Chat messages={messages} conversationId={params.id} />;
+  const lastMessage = messages[messages.length - 1]
+  const requestResponse = lastMessage.type === "human"
+  return <Chat messages={messages} conversationId={params.id} requestResponse={requestResponse}/>;
 }
