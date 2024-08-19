@@ -46,13 +46,20 @@ export async function login(formData: FormData) {
   if (response.ok) {
     const { access_token } = await response.json();
     cookies().set("jwtToken", access_token, {
-      httpOnly: true,
       secure: true,
       sameSite: "lax",
       path: "/",
     });
     redirect("/app");
   }
+}
+
+export async function logout() {
+  const cookieStore = cookies();
+  if (cookieStore.has("jwtToken")) {
+    cookieStore.delete("jwtToken");
+  }
+  redirect("/login");
 }
 
 const ArticleSchema = z.object({
@@ -143,5 +150,5 @@ export async function startConversation(message: string) {
   });
   const resp = await response.json();
   revalidatePath("/app/chat");
-  return { message: resp.message, conversationId: resp.conversation_id };
+  return resp; 
 }

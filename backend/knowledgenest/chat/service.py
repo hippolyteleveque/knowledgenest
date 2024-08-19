@@ -1,44 +1,60 @@
 from typing import List
-from sqlalchemy import asc, desc
+from sqlalchemy import and_, desc
 from sqlalchemy.orm.session import Session
-from langchain_openai import ChatOpenAI
-from langchain_core.output_parsers import StrOutputParser
-from knowledgenest.chat.models import ChatConversation, ChatMessage
-from knowledgenest.lib import OPENAI_API_KEY, MODEL
 
+
+from knowledgenest.chat.models import ChatConversation, ChatMessage
+from knowledgenest.chat.utils import get_chain
 from datetime import datetime
 
 
-def fetch_conversation(conversation_id: str, db: Session) -> List[ChatMessage]:
-    db_conversation = (
-        db.query(ChatMessage)
-        .filter(ChatMessage.conversation_id == conversation_id)
-        .order_by(asc(ChatMessage.created_at))
-        .all()
+def fetch_conversation(
+    conversation_id: str, user_id: str, db: Session
+) -> List[ChatMessage]:
+    conversation = (
+        db.query(ChatConversation)
+        .filter(
+            and_(
+                ChatConversation.id == conversation_id,
+                ChatConversation.user_id == user_id,
+            )
+        )
+        .first()
     )
-    return db_conversation
+    if conversation:
+        return conversation.ordered_messages
+    return []
 
 
-def fetch_conversations(db: Session) -> List[ChatConversation]:
+def fetch_conversations(user_id: str, db: Session) -> List[ChatConversation]:
+    """Returns all conversations of the user"""
     conversations = (
-        db.query(ChatConversation).order_by(desc(ChatConversation.created_at)).all()
+        db.query(ChatConversation)
+        .filter(ChatConversation.user_id == user_id)
+        .order_by(desc(ChatConversation.created_at))
+        .all()
     )
     return conversations
 
 
-def chat(new_message: str, conversation_id: str, db: Session) -> str:
-    """Continue the chat with the user"""
-    add_human_message(new_message, conversation_id, db)
-    db_conversation = fetch_conversation(conversation_id, db)
+async def chat_stream(
+    new_message: str, conversation_id: str, user_id: str, db: Session
+):
+    """Continue the chat with the user on the specified conversation"""
+    if new_message != "<START>":  # TODO change this
+        add_human_message(new_message, conversation_id, db)
+    db_conversation = fetch_conversation(conversation_id, user_id, db)
     messages = [msg.convert_to_langchain() for msg in db_conversation]
-    llm = ChatOpenAI(model=MODEL, api_key=OPENAI_API_KEY)
-    chain = llm | StrOutputParser()
-    resp = chain.invoke(messages)
-    add_ai_message(resp, conversation_id, db)
-    return resp
+    chain = get_chain(str(user_id))
+    resp = chain.astream(dict(messages=messages))
+    total_message = ""
+    async for chunk in resp:
+        total_message += chunk
+        yield chunk
+    add_ai_message(total_message, conversation_id, db)
 
 
-def add_human_message(content: str, conversation_id: str, db: Session):
+def add_human_message(content: str, conversation_id: str, db: Session) -> ChatMessage:
     new_message = ChatMessage(
         content=content,
         type="human",
@@ -51,7 +67,8 @@ def add_human_message(content: str, conversation_id: str, db: Session):
     return new_message
 
 
-def add_ai_message(content: str, conversation_id: str, db: Session):
+def add_ai_message(content: str, conversation_id: str, db: Session) -> ChatMessage:
+    """Add a new AI message on the database"""
     new_message = ChatMessage(
         content=content,
         type="ai",
@@ -64,9 +81,9 @@ def add_ai_message(content: str, conversation_id: str, db: Session):
     return new_message
 
 
-def add_conversation(db: Session):
+def add_conversation(user_id: str, db: Session) -> ChatConversation:
     """Create a new conversation"""
-    new_conversation = ChatConversation(created_at=datetime.now())
+    new_conversation = ChatConversation(user_id=user_id, created_at=datetime.now())
     db.add(new_conversation)
     db.commit()
     db.refresh(new_conversation)
