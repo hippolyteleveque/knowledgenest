@@ -27,6 +27,7 @@ def fetch_conversation(
 
 
 def fetch_conversations(user_id: str, db: Session) -> List[ChatConversation]:
+    """Returns all conversations of the user"""
     conversations = (
         db.query(ChatConversation)
         .filter(ChatConversation.user_id == user_id)
@@ -36,21 +37,10 @@ def fetch_conversations(user_id: str, db: Session) -> List[ChatConversation]:
     return conversations
 
 
-def chat(new_message: str, conversation_id: str, user_id: str, db: Session) -> str:
-    """Continue the chat with the user"""
-    add_human_message(new_message, conversation_id, db)
-    db_conversation = fetch_conversation(conversation_id, user_id, db)
-    messages = [msg.convert_to_langchain() for msg in db_conversation]
-    chain = get_chain(str(user_id))
-    resp = chain.invoke(dict(messages=messages))
-    add_ai_message(resp, conversation_id, db)
-    return resp
-
-
 async def chat_stream(
     new_message: str, conversation_id: str, user_id: str, db: Session
 ):
-    """Continue the chat with the user"""
+    """Continue the chat with the user on the specified conversation"""
     add_human_message(new_message, conversation_id, db)
     db_conversation = fetch_conversation(conversation_id, user_id, db)
     messages = [msg.convert_to_langchain() for msg in db_conversation]
@@ -63,7 +53,7 @@ async def chat_stream(
     add_ai_message(total_message, conversation_id, db)
 
 
-def add_human_message(content: str, conversation_id: str, db: Session):
+def add_human_message(content: str, conversation_id: str, db: Session) -> ChatMessage:
     new_message = ChatMessage(
         content=content,
         type="human",
@@ -76,7 +66,8 @@ def add_human_message(content: str, conversation_id: str, db: Session):
     return new_message
 
 
-def add_ai_message(content: str, conversation_id: str, db: Session):
+def add_ai_message(content: str, conversation_id: str, db: Session) -> ChatMessage:
+    """Add a new AI message on the database"""
     new_message = ChatMessage(
         content=content,
         type="ai",
@@ -89,7 +80,7 @@ def add_ai_message(content: str, conversation_id: str, db: Session):
     return new_message
 
 
-def add_conversation(user_id: str, db: Session):
+def add_conversation(user_id: str, db: Session) -> ChatConversation:
     """Create a new conversation"""
     new_conversation = ChatConversation(user_id=user_id, created_at=datetime.now())
     db.add(new_conversation)

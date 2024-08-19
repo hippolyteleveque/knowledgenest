@@ -6,10 +6,9 @@ from knowledgenest.chat.schema import (
     ChatConversationOut,
     ChatMessageIn,
     ChatMessageOut,
-    FirstChatMessageOut,
 )
 from knowledgenest.chat.service import (
-    chat,
+    add_human_message,
     add_conversation,
     chat_stream,
     fetch_conversation,
@@ -20,14 +19,15 @@ from knowledgenest.chat.service import (
 router = APIRouter(prefix="/chat", tags=["chat"])
 
 
-@router.post("/", response_model=FirstChatMessageOut)
-def create_convesation(
+@router.post("/", response_model=ChatConversationOut)
+def create_conversation(
     request: ChatMessageIn, current_user: CurrentUser, db: DbSession
 ):
     conversation = add_conversation(current_user.id, db)
     conversation_id = str(conversation.id)
-    message = chat(request.message, conversation_id, current_user.id, db)
-    return dict(message=message, type="ai", conversation_id=conversation.id)
+    add_human_message(request.message, conversation_id, db)
+    db.refresh(conversation)  # so that it has the messages
+    return dict(id=conversation_id, name=conversation.name)
 
 
 @router.get("/", response_model=List[ChatConversationOut])
@@ -47,14 +47,6 @@ def get_conversation(id: str, current_user: CurrentUser, db: DbSession):
         ChatMessageOut(message=msg.content, type=msg.type) for msg in messages
     ]
     return formatted_messages
-
-
-@router.post("/{id}", response_model=ChatMessageOut)
-def send_chat(
-    id: str, request: ChatMessageIn, current_user: CurrentUser, db: DbSession
-):
-    message = chat(request.message, id, current_user.id, db)
-    return ChatMessageOut(message=message, type="ai")
 
 
 @router.websocket("/{id}/ws")
