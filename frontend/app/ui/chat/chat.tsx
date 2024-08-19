@@ -8,6 +8,7 @@ import Cookies from "js-cookie";
 type ChatProps = {
   messages: ChatMessage[];
   conversationId: string;
+  requestResponse: boolean;
 };
 
 export default function Chat(props: ChatProps) {
@@ -27,7 +28,9 @@ export default function Chat(props: ChatProps) {
     setSocket(ws);
 
     ws.onopen = () => {
-
+      if (props.requestResponse) {
+        ws.send("<START>"); // TODO make that better
+      }
     };
 
     ws.onmessage = (event) => {
