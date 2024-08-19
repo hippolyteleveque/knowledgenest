@@ -8,7 +8,6 @@ import Cookies from "js-cookie";
 type ChatProps = {
   messages: ChatMessage[];
   conversationId: string;
-  requestResponse: boolean;
 };
 
 export default function Chat(props: ChatProps) {
@@ -28,9 +27,7 @@ export default function Chat(props: ChatProps) {
     setSocket(ws);
 
     ws.onopen = () => {
-      if (props.requestResponse) {
-        ws.send(props.messages[props.messages.length - 1].message)
-      }
+
     };
 
     ws.onmessage = (event) => {
@@ -60,7 +57,7 @@ export default function Chat(props: ChatProps) {
     return () => {
       ws.close();
     };
-  }, [props.conversationId, props.requestResponse, props.messages]);
+  }, [props.conversationId]);
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
