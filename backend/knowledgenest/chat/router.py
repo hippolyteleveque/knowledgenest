@@ -27,17 +27,18 @@ def create_conversation(
     conversation_id = str(conversation.id)
     add_human_message(request.message, conversation_id, db)
     db.refresh(conversation)  # so that it has the messages
-    return dict(id=conversation_id, name=conversation.name)
+    return conversation
 
 
 @router.get("/", response_model=List[ChatConversationOut])
 def get_conversations(current_user: CurrentUser, db: DbSession):
+    # TODO handle pagination
     conversations = fetch_conversations(current_user.id, db)
-    formatted_conversations = [
-        ChatConversationOut(id=conversation.id, name=conversation.name)
-        for conversation in conversations
-    ]
-    return formatted_conversations
+    # formatted_conversations = [
+    #     ChatConversationOut(id=conversation.id, name=conversation.name)
+    #     for conversation in conversations
+    # ]
+    return conversations
 
 
 @router.get("/{id}", response_model=List[ChatMessageOut])
