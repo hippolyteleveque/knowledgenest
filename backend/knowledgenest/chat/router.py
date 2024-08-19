@@ -34,10 +34,6 @@ def create_conversation(
 def get_conversations(current_user: CurrentUser, db: DbSession):
     # TODO handle pagination
     conversations = fetch_conversations(current_user.id, db)
-    # formatted_conversations = [
-    #     ChatConversationOut(id=conversation.id, name=conversation.name)
-    #     for conversation in conversations
-    # ]
     return conversations
 
 
