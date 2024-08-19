@@ -30,8 +30,7 @@ export async function fetchConversations(): Promise<ChatConversation[]> {
     },
   });
   if (response.ok) {
-    // const { articles, numArticles } = await response.json();
-    const conversations = await response.json();
+    let conversations: ChatConversation[] = await response.json();
     return conversations;
   }
   // TODO: error handling

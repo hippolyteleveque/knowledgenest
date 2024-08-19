@@ -16,4 +16,5 @@ export type ChatMessage = {
 export type ChatConversation = {
   id: string;
   name: string;
+  created_at: Date;
 };
