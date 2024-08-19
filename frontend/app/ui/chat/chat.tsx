@@ -64,7 +64,7 @@ export default function Chat(props: ChatProps) {
     if (currUserMsg && socket) {
       socket.send(currUserMsg);
       setMessages((msgs) => [...msgs, { type: "human", message: currUserMsg }]);
-      setCurrUserMsg("");
+      setCurrUserMsg(null);
     }
     if (chatRef.current) {
       chatRef.current.scrollTop = chatRef.current.scrollHeight;
