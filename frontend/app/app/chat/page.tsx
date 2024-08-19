@@ -18,7 +18,6 @@ export default function Page() {
       setMessages((msgs) => [...msgs, { type: "human", message: currUserMsg }]);
       setCurrUserMsg(null);
       const { id: conversationId } = await startConversation(currUserMsg);
-      // setMessages((msgs) => [...msgs, { type: "ai", message: message }]);
       replace(`${pathname}/${conversationId}`);
     }
   };

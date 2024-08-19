@@ -29,7 +29,7 @@ export default function Chat(props: ChatProps) {
 
     ws.onopen = () => {
       if (props.requestResponse) {
-        ws.send(props.messages[props.messages.length - 1].message)
+        ws.send("<START>"); // TODO make that better
       }
     };
 
@@ -60,14 +60,14 @@ export default function Chat(props: ChatProps) {
     return () => {
       ws.close();
     };
-  }, [props.conversationId, props.requestResponse, props.messages]);
+  }, [props.conversationId]);
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
     if (currUserMsg && socket) {
       socket.send(currUserMsg);
       setMessages((msgs) => [...msgs, { type: "human", message: currUserMsg }]);
-      setCurrUserMsg("");
+      setCurrUserMsg(null);
     }
     if (chatRef.current) {
       chatRef.current.scrollTop = chatRef.current.scrollHeight;
