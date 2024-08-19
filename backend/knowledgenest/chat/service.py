@@ -41,7 +41,8 @@ async def chat_stream(
     new_message: str, conversation_id: str, user_id: str, db: Session
 ):
     """Continue the chat with the user on the specified conversation"""
-    add_human_message(new_message, conversation_id, db)
+    if new_message != "<START>":  # TODO change this
+        add_human_message(new_message, conversation_id, db)
     db_conversation = fetch_conversation(conversation_id, user_id, db)
     messages = [msg.convert_to_langchain() for msg in db_conversation]
     chain = get_chain(str(user_id))
