@@ -60,7 +60,7 @@ export default function Chat(props: ChatProps) {
     return () => {
       ws.close();
     };
-  }, [props.conversationId]);
+  }, [props.conversationId, props.requestResponse]);
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
@@ -78,7 +78,7 @@ export default function Chat(props: ChatProps) {
     if (msg.type === "human") {
       return (
         <div className="flex flex-row-reverse items-start gap-4" key={i}>
-          <div className="rounded-lg bg-gray-900 p-4 text-sm text-gray-50 dark:bg-gray-50 dark:text-gray-900">
+          <div className="rounded-lg bg-gray-900 p-4 text-sm text-gray-50 bg-primary">
             <p>{msg.message}</p>
           </div>
         </div>
