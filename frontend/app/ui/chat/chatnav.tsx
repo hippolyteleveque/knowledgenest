@@ -63,7 +63,7 @@ export default async function ChatNav() {
         <div className="grid gap-1 p-2 text-foreground">
           <div className="flex justify-center">
             <Link href="/app/chat">
-              <CirclePlus className="h-6 w-6" />
+              <CirclePlus className="h-6 w-6 text-primary" />
             </Link>
           </div>
           <div className="overflow-y-auto max-h-[calc(100vh-100px)]">
