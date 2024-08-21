@@ -2,11 +2,13 @@
 
 import Link from "next/link";
 import clsx from "clsx";
-import { Home, Settings, Cpu } from "lucide-react";
+import { Newspaper, Settings, Cpu, Youtube } from "lucide-react";
+
 import { usePathname } from "next/navigation";
 
 const links = [
-  { name: "Home", href: "/app", icon: Home },
+  { name: "Articles", href: "/app", icon: Newspaper },
+  { name: "Youtube", href: "/app/videos", icon: Youtube },
   {
     name: "Chat",
     href: "/app/chat",
@@ -37,7 +39,7 @@ export default function NavLinks() {
                 "flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary",
                 {
                   "text-primary bg-muted font-semibold": pathname == link.href,
-                },
+                }
               )}
             >
               <LinkIcon className="h-4 w-4" />
