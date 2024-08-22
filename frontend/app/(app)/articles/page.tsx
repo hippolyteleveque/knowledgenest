@@ -1,6 +1,6 @@
-import ArticleCards from "../ui/home/ArticleCards";
-import AddArticleDialog from "../ui/home/add-article-dialog";
-import ArticlePagination from "../ui/home/pagination";
+import ArticleCards from "../../ui/home/ArticleCards";
+import AddArticleDialog from "../../ui/home/add-article-dialog";
+import ContentPagination from "../../ui/common/pagination";
 import { fetchArticles } from "@/app/lib/data";
 
 const ITEMS_PER_PAGE = 8;
@@ -25,7 +25,7 @@ export default async function Page({
         <ArticleCards articles={articles} />
       </div>
       <div className="pt-5">
-        <ArticlePagination currentPage={currentPage} numPages={numPages} />
+        <ContentPagination currentPage={currentPage} numPages={numPages} />
       </div>
     </main>
   );

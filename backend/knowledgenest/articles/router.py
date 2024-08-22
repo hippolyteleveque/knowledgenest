@@ -22,8 +22,8 @@ def get_articles(
     current_user: CurrentUser, db: DbSession, offset: int = 0, limit: int = 10
 ):
     # TODO handle pagination
-    all_articles = fetch_articles(str(current_user.id), db, offset, limit)
-    return all_articles
+    articles = fetch_articles(str(current_user.id), db, offset, limit)
+    return articles
 
 
 @router.post("/", response_model=ArticleOut)

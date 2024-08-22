@@ -54,3 +54,22 @@ export async function fetchConversation(id: string): Promise<ChatMessage[]> {
   // TODO: error handling
   return [];
 }
+
+export async function fetchVideos(page: number, itemsPerPage: number) {
+  const bearerToken = cookies().get("jwtToken")?.value;
+  const offset = (page - 1) * itemsPerPage;
+  const videosUrl = `${process.env.API_HOST}/api/v1/videos/?offset=${offset}&limit=${itemsPerPage}`;
+  const response = await fetch(videosUrl, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${bearerToken}`,
+    },
+  });
+  if (response.ok) {
+    // const { articles, numArticles } = await response.json();
+    const { videos, videos_count: numVideos } = await response.json();
+    return { videos, numVideos };
+  }
+  // TODO: error handling
+  return { videos: [], numVideos: 0 };
+}

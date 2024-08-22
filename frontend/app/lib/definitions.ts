@@ -18,3 +18,11 @@ export type ChatConversation = {
   name: string;
   created_at: Date;
 };
+
+export type Video = {
+  id: string;
+  url: string;
+  description: string;
+  imageUrl: string;
+  title: string;
+};
