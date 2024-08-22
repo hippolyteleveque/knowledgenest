@@ -62,7 +62,7 @@ export default async function ChatNav() {
       <div className="flex-1 overflow-auto mt-3">
         <div className="grid gap-1 p-2 text-foreground">
           <div className="flex justify-center">
-            <Link href="/app/chat">
+            <Link href="/chat">
               <CirclePlus className="h-6 w-6 text-primary" />
             </Link>
           </div>
@@ -75,7 +75,7 @@ export default async function ChatNav() {
                 {sortedData.today.map((conv) => {
                   return (
                     <Link
-                      href={`/app/chat/${conv.id}`}
+                      href={`/chat/${conv.id}`}
                       className="flex-1 block p-2 overflow-hidden text-sm truncate transition-colors rounded-md whitespace-nowrap hover:bg-muted/50"
                       key={conv.id}
                     >
@@ -93,7 +93,7 @@ export default async function ChatNav() {
                 {sortedData.yesterday.map((conv) => {
                   return (
                     <Link
-                      href={`/app/chat/${conv.id}`}
+                      href={`/chat/${conv.id}`}
                       className="flex-1 block p-2 overflow-hidden text-sm truncate transition-colors rounded-md whitespace-nowrap hover:bg-muted/50"
                       key={conv.id}
                     >
@@ -111,7 +111,7 @@ export default async function ChatNav() {
                 {sortedData.lastWeek.map((conv) => {
                   return (
                     <Link
-                      href={`/app/chat/${conv.id}`}
+                      href={`/chat/${conv.id}`}
                       className="flex-1 block p-2 overflow-hidden text-sm truncate transition-colors rounded-md whitespace-nowrap hover:bg-muted/50"
                       key={conv.id}
                     >
@@ -129,7 +129,7 @@ export default async function ChatNav() {
                 {sortedData.before.map((conv) => {
                   return (
                     <Link
-                      href={`/app/chat/${conv.id}`}
+                      href={`/chat/${conv.id}`}
                       className="flex-1 block p-2 overflow-hidden text-sm truncate transition-colors rounded-md whitespace-nowrap hover:bg-muted/50"
                       key={conv.id}
                     >
