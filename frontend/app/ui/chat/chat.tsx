@@ -23,7 +23,7 @@ export default function Chat(props: ChatProps) {
     }
     const token = Cookies.get("jwtToken");
     const ws = new WebSocket(
-      `ws://localhost:8000/api/v1/chat/${props.conversationId}/ws?token=${token}`
+      `${process.env.NEXT_PUBLIC_WEBSOCKET_HOST}/api/v1/chat/${props.conversationId}/ws?token=${token}`
     );
     setSocket(ws);
 
