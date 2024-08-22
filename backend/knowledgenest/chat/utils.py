@@ -2,6 +2,7 @@ from operator import itemgetter
 from typing import Dict
 
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
+from langchain_core.runnables import RunnableParallel, RunnableLambda
 from langchain_core.output_parsers import StrOutputParser
 from langchain_mistralai import ChatMistralAI, MistralAIEmbeddings
 from langchain_pinecone import PineconeVectorStore
@@ -35,13 +36,23 @@ def get_chain(user_id: str):
         search_kwargs=dict(k=3, filter=dict(user_id=user_id))
     )
     chain = (
-        dict(
-            context=parse_retriever_input | retriever | format_docs,
+        dict(docs=parse_retriever_input | retriever, messages=itemgetter("messages"))
+        | RunnableParallel(
+            context=itemgetter("docs") | RunnableLambda(format_docs),
             messages=itemgetter("messages"),
+            sources=itemgetter("docs")
+            | RunnableLambda(
+                lambda docs: list({doc.metadata["content_id"] for doc in docs})
+            ),
         )
-        | prompt
-        | llm
-        | StrOutputParser()
+        | RunnableParallel(
+            prompt=prompt,
+            sources=itemgetter("sources"),
+        )
+        | RunnableParallel(
+            output=itemgetter("prompt") | llm | StrOutputParser(),
+            sources=itemgetter("sources"),
+        )
     )
     return chain
 

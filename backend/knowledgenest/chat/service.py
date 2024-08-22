@@ -49,7 +49,8 @@ async def chat_stream(
     resp = chain.astream(dict(messages=messages))
     total_message = ""
     async for chunk in resp:
-        total_message += chunk
+        if "output" in chunk:
+            total_message += chunk["output"]
         yield chunk
     add_ai_message(total_message, conversation_id, db)
 
