@@ -152,3 +152,51 @@ export async function startConversation(message: string) {
   revalidatePath("/app/chat");
   return resp; 
 }
+
+export async function deleteVideo(videoId: string) {
+  const bearerToken = cookies().get("jwtToken")?.value;
+  // TODO : clean up this abomination
+  if (!bearerToken) {
+    redirect("/login");
+  }
+  const deletionUrl = `${process.env.API_HOST}/api/v1/videos/${videoId}`;
+  const response = await fetch(deletionUrl, {
+    method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${bearerToken}`,
+    },
+  });
+  if (!response.ok) {
+    // TODO put some error handling logic
+  }
+  revalidatePath("/app/videos");
+}
+
+const VideoSchema = z.object({
+  videoUrl: z.string(),
+});
+
+export async function addVideo(formData: FormData) {
+  const validatedFields = VideoSchema.parse({
+    videoUrl: formData.get("videoUrl"),
+  });
+  const { videoUrl } = validatedFields;
+  const addVideoUrl = `${process.env.API_HOST}/api/v1/videos/`;
+  const bearerToken = cookies().get("jwtToken")?.value;
+  // TODO : clean up this abomination
+  if (!bearerToken) {
+    redirect("/login");
+  }
+  const response = await fetch(addVideoUrl, {
+    method: "POST",
+    body: JSON.stringify({ url: videoUrl }),
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${bearerToken}`,
+    },
+  });
+  if (!response.ok) {
+    // TODO put some error message
+  }
+  revalidatePath("/app/videos");
+}
