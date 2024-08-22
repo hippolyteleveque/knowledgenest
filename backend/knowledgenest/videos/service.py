@@ -59,7 +59,7 @@ def process_doc(doc, video: Video, i: int):
     pc_obj["metadata"] = dict(
         **doc.metadata,
         user_id=str(video.user_id),
-        article_id=str(video.id),
+        content_id=str(video.id),
         text=doc.page_content,
         type="video",
     )
