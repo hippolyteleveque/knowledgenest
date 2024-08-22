@@ -70,6 +70,7 @@ def process_doc(doc, article: Article, i: int):
         user_id=str(article.user_id),
         article_id=str(article.id),
         text=doc.page_content,
+        type="article",
     )
     pc_obj["values"] = embeddings.embed_documents([doc.page_content])[0]
     pc_obj["id"] = f"{article.id}_{i}"
