@@ -11,15 +11,15 @@ from knowledgenest.lib import MISTRAL_EMBEDDING_MODEL, MISTRALAI_API_KEY
 
 
 def fetch_videos(user_id: str, db: Session, offset: int = 0, limit: int = 10):
-    articles_count = db.query(Video).count()
-    articles = (
+    videos_counts = db.query(Video).count()
+    videos = (
         db.query(Video)
         .filter(Video.user_id == user_id)
         .offset(offset)
         .limit(limit)
         .all()
     )
-    return dict(articles_count=articles_count, articles=articles)
+    return dict(videos_count=videos_counts, videos=videos)
 
 
 def delete_video_by_id(video_id: str, user_id: str, db: Session):
