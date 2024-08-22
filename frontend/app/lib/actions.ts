@@ -50,7 +50,7 @@ export async function login(formData: FormData) {
       sameSite: "lax",
       path: "/",
     });
-    redirect("/app");
+    redirect("/articles");
   }
 }
 
@@ -88,7 +88,7 @@ export async function addArticle(formData: FormData) {
   if (!response.ok) {
     // TODO put some error message
   }
-  revalidatePath("/app");
+  revalidatePath("/articles");
 }
 
 export async function deleteArticle(articleId: string) {
@@ -107,7 +107,7 @@ export async function deleteArticle(articleId: string) {
   if (!response.ok) {
     // TODO put some error handling logic
   }
-  revalidatePath("/app");
+  revalidatePath("/articles");
 }
 
 export async function sendChatMessage(message: string, conversationId: string) {
@@ -129,7 +129,7 @@ export async function sendChatMessage(message: string, conversationId: string) {
     },
   });
   const resp = await response.json();
-  revalidatePath("/app/chat");
+  revalidatePath("/chat");
   return resp.message;
 }
 
@@ -149,6 +149,54 @@ export async function startConversation(message: string) {
     },
   });
   const resp = await response.json();
-  revalidatePath("/app/chat");
+  revalidatePath("/chat");
   return resp; 
+}
+
+export async function deleteVideo(videoId: string) {
+  const bearerToken = cookies().get("jwtToken")?.value;
+  // TODO : clean up this abomination
+  if (!bearerToken) {
+    redirect("/login");
+  }
+  const deletionUrl = `${process.env.API_HOST}/api/v1/videos/${videoId}`;
+  const response = await fetch(deletionUrl, {
+    method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${bearerToken}`,
+    },
+  });
+  if (!response.ok) {
+    // TODO put some error handling logic
+  }
+  revalidatePath("/videos");
+}
+
+const VideoSchema = z.object({
+  videoUrl: z.string(),
+});
+
+export async function addVideo(formData: FormData) {
+  const validatedFields = VideoSchema.parse({
+    videoUrl: formData.get("videoUrl"),
+  });
+  const { videoUrl } = validatedFields;
+  const addVideoUrl = `${process.env.API_HOST}/api/v1/videos/`;
+  const bearerToken = cookies().get("jwtToken")?.value;
+  // TODO : clean up this abomination
+  if (!bearerToken) {
+    redirect("/login");
+  }
+  const response = await fetch(addVideoUrl, {
+    method: "POST",
+    body: JSON.stringify({ url: videoUrl }),
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${bearerToken}`,
+    },
+  });
+  if (!response.ok) {
+    // TODO put some error message
+  }
+  revalidatePath("/videos");
 }

@@ -21,6 +21,7 @@ if config.config_file_name is not None:
 from knowledgenest.auth.models import User
 from knowledgenest.articles.models import Article
 from knowledgenest.chat.models import ChatMessage, ChatConversation
+from knowledgenest.videos.models import Video
 from knowledgenest.database import Base
 
 

@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/pagination";
 import { usePathname } from "next/navigation";
 
-export default function ArticlePagination({
+export default function ContentPagination({
   currentPage,
   numPages,
 }: {
