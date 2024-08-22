@@ -16,7 +16,7 @@ export async function signup(formData: FormData) {
     password: formData.get("password"),
   });
   const { email, password } = validatedFields;
-  const signupUrl = `${process.env.API_HOST}/api/v1/auth/signup`;
+  const signupUrl = `${process.env.NEXT_PUBLIC_API_HOST}/api/v1/auth/signup`;
   const response = await fetch(signupUrl, {
     method: "POST",
     headers: {
@@ -37,7 +37,7 @@ export async function login(formData: FormData) {
   const authForm = new FormData();
   authForm.append("username", email);
   authForm.append("password", password);
-  const loginUrl = `${process.env.API_HOST}/api/v1/auth/login`;
+  const loginUrl = `${process.env.NEXT_PUBLIC_API_HOST}/api/v1/auth/login`;
   const response = await fetch(loginUrl, {
     method: "POST",
     body: authForm,
@@ -71,7 +71,7 @@ export async function addArticle(formData: FormData) {
     articleUrl: formData.get("articleUrl"),
   });
   const { articleUrl } = validatedFields;
-  const addArticleUrl = `${process.env.API_HOST}/api/v1/articles/`;
+  const addArticleUrl = `${process.env.NEXT_PUBLIC_API_HOST}/api/v1/articles/`;
   const bearerToken = cookies().get("jwtToken")?.value;
   // TODO : clean up this abomination
   if (!bearerToken) {
@@ -97,7 +97,7 @@ export async function deleteArticle(articleId: string) {
   if (!bearerToken) {
     redirect("/login");
   }
-  const deletionUrl = `${process.env.API_HOST}/api/v1/articles/${articleId}`;
+  const deletionUrl = `${process.env.NEXT_PUBLIC_API_HOST}/api/v1/articles/${articleId}`;
   const response = await fetch(deletionUrl, {
     method: "DELETE",
     headers: {
@@ -116,7 +116,7 @@ export async function sendChatMessage(message: string, conversationId: string) {
   if (!bearerToken) {
     redirect("/login");
   }
-  let chatUrl = `${process.env.API_HOST}/api/v1/chat/`;
+  let chatUrl = `${process.env.NEXT_PUBLIC_API_HOST}/api/v1/chat/`;
   if (conversationId) {
     chatUrl += conversationId.toString();
   }
@@ -139,7 +139,7 @@ export async function startConversation(message: string) {
   if (!bearerToken) {
     redirect("/login");
   }
-  const chatUrl = `${process.env.API_HOST}/api/v1/chat/`;
+  const chatUrl = `${process.env.NEXT_PUBLIC_API_HOST}/api/v1/chat/`;
   const response = await fetch(chatUrl, {
     method: "POST",
     body: JSON.stringify({ message }),
@@ -159,7 +159,7 @@ export async function deleteVideo(videoId: string) {
   if (!bearerToken) {
     redirect("/login");
   }
-  const deletionUrl = `${process.env.API_HOST}/api/v1/videos/${videoId}`;
+  const deletionUrl = `${process.env.NEXT_PUBLIC_API_HOST}/api/v1/videos/${videoId}`;
   const response = await fetch(deletionUrl, {
     method: "DELETE",
     headers: {
@@ -181,7 +181,7 @@ export async function addVideo(formData: FormData) {
     videoUrl: formData.get("videoUrl"),
   });
   const { videoUrl } = validatedFields;
-  const addVideoUrl = `${process.env.API_HOST}/api/v1/videos/`;
+  const addVideoUrl = `${process.env.NEXT_PUBLIC_API_HOST}/api/v1/videos/`;
   const bearerToken = cookies().get("jwtToken")?.value;
   // TODO : clean up this abomination
   if (!bearerToken) {
