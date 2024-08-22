@@ -50,7 +50,7 @@ export async function login(formData: FormData) {
       sameSite: "lax",
       path: "/",
     });
-    redirect("/app");
+    redirect("/articles");
   }
 }
 
@@ -88,7 +88,7 @@ export async function addArticle(formData: FormData) {
   if (!response.ok) {
     // TODO put some error message
   }
-  revalidatePath("/app");
+  revalidatePath("/articles");
 }
 
 export async function deleteArticle(articleId: string) {
@@ -107,7 +107,7 @@ export async function deleteArticle(articleId: string) {
   if (!response.ok) {
     // TODO put some error handling logic
   }
-  revalidatePath("/app");
+  revalidatePath("/articles");
 }
 
 export async function sendChatMessage(message: string, conversationId: string) {
@@ -129,7 +129,7 @@ export async function sendChatMessage(message: string, conversationId: string) {
     },
   });
   const resp = await response.json();
-  revalidatePath("/app/chat");
+  revalidatePath("/chat");
   return resp.message;
 }
 
@@ -149,7 +149,7 @@ export async function startConversation(message: string) {
     },
   });
   const resp = await response.json();
-  revalidatePath("/app/chat");
+  revalidatePath("/chat");
   return resp; 
 }
 
@@ -169,7 +169,7 @@ export async function deleteVideo(videoId: string) {
   if (!response.ok) {
     // TODO put some error handling logic
   }
-  revalidatePath("/app/videos");
+  revalidatePath("/videos");
 }
 
 const VideoSchema = z.object({
@@ -198,5 +198,5 @@ export async function addVideo(formData: FormData) {
   if (!response.ok) {
     // TODO put some error message
   }
-  revalidatePath("/app/videos");
+  revalidatePath("/videos");
 }

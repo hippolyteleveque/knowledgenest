@@ -1,6 +1,6 @@
-import ArticleCards from "../ui/home/ArticleCards";
-import AddArticleDialog from "../ui/home/add-article-dialog";
-import ContentPagination from "../ui/common/pagination";
+import ArticleCards from "../../ui/home/ArticleCards";
+import AddArticleDialog from "../../ui/home/add-article-dialog";
+import ContentPagination from "../../ui/common/pagination";
 import { fetchArticles } from "@/app/lib/data";
 
 const ITEMS_PER_PAGE = 8;

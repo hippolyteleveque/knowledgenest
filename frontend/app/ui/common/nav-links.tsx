@@ -7,16 +7,16 @@ import { Newspaper, Settings, Cpu, Youtube } from "lucide-react";
 import { usePathname } from "next/navigation";
 
 const links = [
-  { name: "Articles", href: "/app", icon: Newspaper },
-  { name: "Youtube", href: "/app/videos", icon: Youtube },
+  { name: "Articles", href: "/articles", icon: Newspaper },
+  { name: "Youtube", href: "/videos", icon: Youtube },
   {
     name: "Chat",
-    href: "/app/chat",
+    href: "/chat",
     icon: Cpu,
   },
   {
     name: "Settings",
-    href: "/app/settings",
+    href: "/settings",
     icon: Settings,
   },
 ];
