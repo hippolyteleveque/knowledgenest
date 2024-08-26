@@ -14,7 +14,7 @@ from knowledgenest.auth.schema import UserBase
 from knowledgenest.auth.utils import create_hash
 from knowledgenest.database import DbSession
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/login")
 
 SECRET_KEY = os.getenv("OAUTH_SECRET_KEY")
 SECRET_KEY = SECRET_KEY or "dev-secret"
