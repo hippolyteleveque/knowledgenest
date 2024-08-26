@@ -1,9 +1,10 @@
+"use client";
 import { Card, CardContent } from "@/components/ui/card";
 import Image from "next/image";
 import { fetchSources } from "@/app/lib/data";
 
 type ChatSourcesProps = {
-  conversationId: string;
+  rawSources: any;
 };
 
 type Source = {
@@ -15,8 +16,9 @@ type Source = {
   score: number;
 };
 
-export default async function ChatSources(props: ChatSourcesProps) {
-  const rawSources = await fetchSources(props.conversationId);
+export default function ChatSources(props: ChatSourcesProps) {
+  // const rawSources = await fetchSources(props.conversationId);
+  const rawSources = props.rawSources;
   const allSources = [...rawSources.videos, ...rawSources.articles];
   const sources: Source[] = allSources.reduce(
     (uniqueSources: Source[], newSource: Source) => {
