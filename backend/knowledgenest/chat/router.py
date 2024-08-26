@@ -39,11 +39,20 @@ def get_conversations(current_user: CurrentUser, db: DbSession):
 
 @router.get("/{id}", response_model=List[ChatMessageOut])
 def get_conversation(id: str, current_user: CurrentUser, db: DbSession):
-    messages = fetch_conversation(id, current_user.id, db)
+    conversation = fetch_conversation(id, current_user.id, db)
+    messages = conversation.ordered_messages
     formatted_messages = [
         ChatMessageOut(message=msg.content, type=msg.type) for msg in messages
     ]
     return formatted_messages
+
+
+@router.get("/{id}/sources")
+def get_conversation_sources(id: str, current_user: CurrentUser, db: DbSession):
+    conversation = fetch_conversation(id, current_user.id, db)
+    videos = conversation.scored_videos
+    articles = conversation.scored_articles
+    return dict(videos=videos, articles=articles)
 
 
 @router.websocket("/{id}/ws")

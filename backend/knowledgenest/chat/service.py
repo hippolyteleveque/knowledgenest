@@ -13,7 +13,7 @@ from datetime import datetime
 
 def fetch_conversation(
     conversation_id: str, user_id: str, db: Session
-) -> List[ChatMessage]:
+) -> ChatConversation:
     """Fetch a specific conversation"""
     conversation = (
         db.query(ChatConversation)
@@ -25,9 +25,9 @@ def fetch_conversation(
         )
         .first()
     )
-    if conversation:
-        return conversation.ordered_messages
-    return []
+    if not conversation:
+        raise ValueError(f"Conversation with id {id} does not exists.")
+    return conversation
 
 
 def fetch_conversations(user_id: str, db: Session) -> List[ChatConversation]:

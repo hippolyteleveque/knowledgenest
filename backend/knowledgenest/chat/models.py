@@ -26,11 +26,14 @@ class ChatConversation(Base):
         res = []
         for article, ctx in zip(self.articles, self.context_articles):
             res.append({"id": article.id, "score": ctx.score})
-        return []
+        return res
 
     @property
     def scored_videos(self) -> list:
-        return []
+        res = []
+        for video, ctx in zip(self.videos, self.context_videos):
+            res.append({"id": video.id, "score": ctx.score})
+        return res
 
     # relationships
     user_id = Column(UUID(as_uuid=True), ForeignKey("users.id"))
