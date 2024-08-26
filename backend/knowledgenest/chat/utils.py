@@ -1,10 +1,15 @@
+import functools
 from operator import itemgetter
-from typing import Dict
+from typing import Dict, List
 
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
+from langchain_core.runnables import Runnable, RunnableParallel, RunnableLambda
 from langchain_core.output_parsers import StrOutputParser
+from langchain_core.vectorstores import VectorStore
 from langchain_mistralai import ChatMistralAI, MistralAIEmbeddings
 from langchain_pinecone import PineconeVectorStore
+from langchain_core.documents import Document
+from langchain_core.runnables import chain
 
 from knowledgenest.vector_database import get_vector_db
 from knowledgenest.lib import (
@@ -16,6 +21,28 @@ from knowledgenest.lib import (
 SYSTEM_PROMPT = """You are a useful assistant that answers politey to users questions. 
             Your answers are based on your general knowledge but 
             you primarily based on the below context when it is useful :\n\n{context}"""
+
+
+def create_retriever(vectorstore: VectorStore, filter: Dict) -> Runnable:
+
+    def retrieve_documents(query: str, vectorstore, filter) -> List[Document]:
+        docs, scores = zip(
+            *vectorstore.similarity_search_with_score(query, k=3, filter=filter)
+        )
+        for doc, score in zip(docs, scores):
+            doc.metadata["score"] = score
+
+        return list(docs)
+
+    retriever = functools.partial(
+        retrieve_documents, vectorstore=vectorstore, filter=filter
+    )
+
+    @chain
+    def retrieve(query: str) -> List[Document]:
+        return retriever(query)
+
+    return retrieve
 
 
 def get_chain(user_id: str):
@@ -31,17 +58,22 @@ def get_chain(user_id: str):
         model=MISTRAL_EMBEDDING_MODEL, api_key=MISTRALAI_API_KEY
     )
     vector_store = PineconeVectorStore(index=index, embedding=embeddings)
-    retriever = vector_store.as_retriever(
-        search_kwargs=dict(k=3, filter=dict(user_id=user_id))
-    )
+    retriever = create_retriever(vector_store, dict(user_id=user_id))
     chain = (
-        dict(
-            context=parse_retriever_input | retriever | format_docs,
+        dict(docs=parse_retriever_input | retriever, messages=itemgetter("messages"))
+        | RunnableParallel(
+            context=itemgetter("docs") | RunnableLambda(format_docs),
             messages=itemgetter("messages"),
+            sources=itemgetter("docs") | RunnableLambda(parse_sources),
         )
-        | prompt
-        | llm
-        | StrOutputParser()
+        | RunnableParallel(
+            prompt=prompt,
+            sources=itemgetter("sources"),
+        )
+        | RunnableParallel(
+            output=itemgetter("prompt") | llm | StrOutputParser(),
+            sources=itemgetter("sources"),
+        )
     )
     return chain
 
@@ -52,3 +84,21 @@ def format_docs(docs):
 
 def parse_retriever_input(params: Dict):
     return params["messages"][-1].content
+
+
+def parse_sources(docs: List[Document]) -> List[Dict]:
+    """Extract unique sources with useful information"""
+    ids = set()
+    sources = []
+    for doc in docs:
+        doc_id = doc.metadata["content_id"]
+        if doc_id not in ids:
+            sources.append(
+                {
+                    "id": doc_id,
+                    "type": doc.metadata["type"],
+                    "score": doc.metadata["score"],
+                }
+            )
+            ids.add(doc_id)
+    return sources

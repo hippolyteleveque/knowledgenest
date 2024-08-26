@@ -59,7 +59,7 @@ export default async function ChatNav() {
 
   return (
     <>
-      <div className="flex-1 overflow-auto mt-3">
+      <div className="flex-1 overflow-auto mt-3 border-r">
         <div className="grid gap-1 p-2 text-foreground">
           <div className="flex justify-center">
             <Link href="/chat">
