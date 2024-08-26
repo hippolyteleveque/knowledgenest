@@ -4,7 +4,7 @@ import { ChatMessage } from "@/app/lib/definitions";
 import Chat from "@/app/ui/chat/chat";
 import ChatSources from "@/app/ui/chat/chat-sources";
 import { useCallback, useState } from "react";
-import Cookies from "js-cookie"
+import Cookies from "js-cookie";
 
 type ChatManagerProps = {
   conversationId: string;
@@ -17,7 +17,7 @@ export default function ChatManager(props: ChatManagerProps) {
   const [sources, setSources] = useState<any[]>(props.sources);
 
   const chatCallback = useCallback(async () => {
-    const token = Cookies.get("jwtToken"); 
+    const token = Cookies.get("jwtToken");
     const refreshedSources = await fetchSources(props.conversationId, token!);
     setSources(refreshedSources);
   }, [props.conversationId]);
