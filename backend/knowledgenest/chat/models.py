@@ -28,10 +28,10 @@ class ChatConversation(Base):
     articles = relationship("Article", secondary="conversation_context_article")
     videos = relationship("Video", secondary="conversation_context_video")
     context_articles = relationship(
-        "ConversationContextArticle", back_populates="conversation"
+        "ConversationContextArticle", back_populates="conversation", viewonly=True
     )
     context_videos = relationship(
-        "ConversationContextVideo", back_populates="conversation"
+        "ConversationContextVideo", back_populates="conversation", viewonly=True
     )
 
 
