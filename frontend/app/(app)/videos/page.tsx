@@ -17,7 +17,7 @@ export default async function Page({
   );
   const numPages = Math.ceil(numVideos / ITEMS_PER_PAGE);
   return (
-    <main className="flex flex-1 flex-col pt-5">
+    <main className="flex flex-1 flex-col pt-5 px-4">
       <div className="w-40 justify-end">
         <AddVideoDialog />
       </div>
