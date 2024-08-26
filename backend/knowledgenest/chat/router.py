@@ -13,6 +13,7 @@ from knowledgenest.chat.service import (
     chat_stream,
     fetch_conversation,
     fetch_conversations,
+    fetch_sources,
 )
 
 
@@ -49,9 +50,7 @@ def get_conversation(id: str, current_user: CurrentUser, db: DbSession):
 
 @router.get("/{id}/sources")
 def get_conversation_sources(id: str, current_user: CurrentUser, db: DbSession):
-    conversation = fetch_conversation(id, current_user.id, db)
-    videos = conversation.scored_videos
-    articles = conversation.scored_articles
+    videos, articles = fetch_sources(id, current_user.id, db)
     return dict(videos=videos, articles=articles)
 
 

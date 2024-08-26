@@ -21,20 +21,6 @@ class ChatConversation(Base):
     def ordered_messages(self):
         return sorted(self.messages, key=lambda x: x.created_at)
 
-    @property
-    def scored_articles(self) -> list:
-        res = []
-        for article, ctx in zip(self.articles, self.context_articles):
-            res.append({"id": article.id, "score": ctx.score})
-        return res
-
-    @property
-    def scored_videos(self) -> list:
-        res = []
-        for video, ctx in zip(self.videos, self.context_videos):
-            res.append({"id": video.id, "score": ctx.score})
-        return res
-
     # relationships
     user_id = Column(UUID(as_uuid=True), ForeignKey("users.id"))
     user = relationship("User", back_populates="conversations")

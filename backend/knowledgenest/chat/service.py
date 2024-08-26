@@ -48,7 +48,7 @@ async def chat_stream(
     if new_message != "<START>":  # TODO change this
         add_human_message(new_message, conversation_id, db)
     db_conversation = fetch_conversation(conversation_id, user_id, db)
-    messages = [msg.convert_to_langchain() for msg in db_conversation]
+    messages = [msg.convert_to_langchain() for msg in db_conversation.ordered_messages]
     chain = get_chain(str(user_id))
     resp = chain.astream(dict(messages=messages))
     total_message = ""
@@ -59,7 +59,6 @@ async def chat_stream(
                 add_new_source(
                     conversation_id, source["id"], source["type"], source["score"], db
                 )
-            continue
         elif "output" in chunk:
             total_message += chunk["output"]
             yield chunk
@@ -119,3 +118,36 @@ def add_new_source(
         raise TypeError(f"Source type not known : {source_type}")
     db.add(new_source)
     db.commit()
+
+
+def fetch_sources(conversation_id: UUID, current_user_id: UUID, db: Session):
+    conversation = fetch_conversation(conversation_id, current_user_id, db)
+    videos_map = {}
+    # we only get the best score
+    for ctx in conversation.context_videos:
+        videos_map[ctx.video_id] = {"score": ctx.score}
+    for video in conversation.videos:
+        videos_map[video.id].update(
+            {
+                "id": video.id,
+                "imageUrl": video.imageUrl,
+                "title": video.title,
+                "description": video.description,
+                "url": video.url,
+            }
+        )
+    articles_map = {}
+    # we only get the best score
+    for ctx in conversation.context_articles:
+        articles_map[ctx.article_id] = {"score": ctx.score}
+    for article in conversation.articles:
+        articles_map[article.id].update(
+            {
+                "id": article.id,
+                "imageUrl": article.imageUrl,
+                "title": video.title,
+                "description": article.description,
+                "url": article.url,
+            }
+        )
+    return list(videos_map.values()), list(articles_map.values())
