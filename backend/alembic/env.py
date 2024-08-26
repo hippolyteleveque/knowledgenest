@@ -19,9 +19,9 @@ if config.config_file_name is not None:
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
 from knowledgenest.auth.models import User
-from knowledgenest.articles.models import Article
+from knowledgenest.articles.models import Article, ConversationContextArticle
 from knowledgenest.chat.models import ChatMessage, ChatConversation
-from knowledgenest.videos.models import Video
+from knowledgenest.videos.models import Video, ConversationContextVideo
 from knowledgenest.database import Base
 
 
