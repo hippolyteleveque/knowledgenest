@@ -40,15 +40,20 @@ export default function Chat(props: ChatProps) {
           { type: "ai", message: "" },
         ]);
       } else {
-        setMessages((prevMessages) => {
-          const lastAiMessage = prevMessages[prevMessages.length - 1];
-          const newAiMessage = {
-            ...lastAiMessage,
-            message: lastAiMessage.message + event.data,
-          };
-          const previousMessages = prevMessages.slice(0, -1);
-          return [...previousMessages, newAiMessage];
-        });
+        const data = JSON.parse(event.data);
+        if ("output" in data) {
+          setMessages((prevMessages) => {
+            const lastAiMessage = prevMessages[prevMessages.length - 1];
+            const newAiMessage = {
+              ...lastAiMessage,
+              message: lastAiMessage.message + data.output,
+            };
+            const previousMessages = prevMessages.slice(0, -1);
+            return [...previousMessages, newAiMessage];
+          });
+        } else if ("sources" in data) {
+          console.log(data)
+        }
       }
       if (chatRef.current) {
         chatRef.current.scrollTop = chatRef.current.scrollHeight;

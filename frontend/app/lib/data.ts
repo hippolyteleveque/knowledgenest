@@ -73,3 +73,21 @@ export async function fetchVideos(page: number, itemsPerPage: number) {
   // TODO: error handling
   return { videos: [], numVideos: 0 };
 }
+
+export async function fetchSources(conversationId: string) {
+  const bearerToken = cookies().get("jwtToken")?.value;
+  const sourcesUrl = `${process.env.API_HOST}/api/v1/chat/${conversationId}/sources`;
+  const response = await fetch(sourcesUrl, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${bearerToken}`,
+    },
+  });
+  if (response.ok) {
+    // const { articles, numArticles } = await response.json();
+    const sources = await response.json();
+    return sources;
+  }
+  // TODO: error handling
+  return {};
+}
