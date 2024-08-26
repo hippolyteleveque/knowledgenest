@@ -145,7 +145,7 @@ def fetch_sources(conversation_id: UUID, current_user_id: UUID, db: Session):
             {
                 "id": article.id,
                 "imageUrl": article.imageUrl,
-                "title": video.title,
+                "title": article.title,
                 "description": article.description,
                 "url": article.url,
             }
