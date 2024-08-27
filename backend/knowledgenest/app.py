@@ -11,7 +11,7 @@ app = FastAPI(root_path="/api/v1")
 
 
 def configure_cors():
-    if os.environ["ENVIRONMENT"] == "DEVELOPMENT":
+    if os.environ.get("ENVIRONMENT", "DEVELOPMENT") == "DEVELOPMENT":
         origins = [
             "http://localhost:3000",
         ]
