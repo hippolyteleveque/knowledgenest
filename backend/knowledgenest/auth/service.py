@@ -38,7 +38,7 @@ def verify_access_token(token: str) -> bool:
     try:
         decoded_token = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         return decoded_token["exp"] >= time.time()
-    except (KeyError, ExpiredSignatureError):
+    except (KeyError, ExpiredSignatureError, JWTError):
         return False
 
 
