@@ -4,11 +4,9 @@ from unittest.mock import Mock, patch
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-import warnings
 
 from knowledgenest.database import Base, get_db
 from knowledgenest.auth.service import create_access_token, create_user
-from fastapi import BackgroundTasks
 
 # Setup test database
 SQLALCHEMY_DATABASE_URL = "sqlite:///./test.db"
