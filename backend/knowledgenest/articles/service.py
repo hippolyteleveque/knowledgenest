@@ -25,7 +25,7 @@ def process_new_article(url: str, user_id: UUID, db: Session):
 
 
 def fetch_articles(user_id: UUID, db: Session, offset: int = 0, limit: int = 10):
-    articles_count = db.query(Article).count()
+    articles_count = db.query(Article).filter(Article.user_id == user_id).count()
     articles = (
         db.query(Article)
         .filter(Article.user_id == user_id)
