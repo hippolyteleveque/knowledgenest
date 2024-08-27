@@ -16,8 +16,8 @@ export function ArticleCard({ article }: { article: Article }) {
         <Image
           src={article.imageUrl}
           alt={article.description}
-          width={400}
-          height={300}
+          width={320}
+          height={240}
         />
       </CardContent>
       <h4 className="scroll-m-20 text-sm font-semibold tracking-tight text-center">

@@ -1,9 +1,11 @@
 import Chat from "@/app/ui/chat/chat";
-import { fetchConversation } from "@/app/lib/data";
+import { fetchConversation, fetchSources } from "@/app/lib/data";
 import ChatSources from "@/app/ui/chat/chat-sources";
+import ChatManager from "@/app/ui/chat/chat-manager";
 
 export default async function Page({ params }: { params: { id: string } }) {
   let messages = await fetchConversation(params.id);
+  const sources = await fetchSources(params.id);
   messages = messages.map((msg) => {
     return {
       type: msg.type,
@@ -14,13 +16,11 @@ export default async function Page({ params }: { params: { id: string } }) {
   const requestResponse = lastMessage.type === "human";
 
   return (
-    <div className="grid min-h-screen w-full md:grid-cols-[1fr_175px] lg:grid-cols-[1fr_250px]">
-      <Chat
-        messages={messages}
-        conversationId={params.id}
-        requestResponse={requestResponse}
-      />
-      <ChatSources conversationId={params.id} />
-    </div>
+    <ChatManager
+      messages={messages}
+      conversationId={params.id}
+      requestResponse={requestResponse}
+      sources={sources}
+    />
   );
 }
