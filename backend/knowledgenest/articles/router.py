@@ -21,8 +21,7 @@ router = APIRouter(prefix="/articles", tags=["articles"])
 def get_articles(
     current_user: CurrentUser, db: DbSession, offset: int = 0, limit: int = 10
 ):
-    # TODO handle pagination
-    articles = fetch_articles(str(current_user.id), db, offset, limit)
+    articles = fetch_articles(current_user.id, db, offset, limit)
     return articles
 
 

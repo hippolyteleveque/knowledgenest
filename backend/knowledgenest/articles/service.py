@@ -1,3 +1,4 @@
+from uuid import UUID
 from sqlalchemy.orm.session import Session
 from fastapi import HTTPException
 from knowledgenest.articles.models import Article
@@ -23,7 +24,7 @@ def process_new_article(url: str, user_id: str, db: Session):
     return new_article
 
 
-def fetch_articles(user_id: str, db: Session, offset: int = 0, limit: int = 10):
+def fetch_articles(user_id: UUID, db: Session, offset: int = 0, limit: int = 10):
     articles_count = db.query(Article).count()
     articles = (
         db.query(Article)
