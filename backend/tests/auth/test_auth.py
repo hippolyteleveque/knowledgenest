@@ -1,5 +1,4 @@
 from knowledgenest.auth.service import create_access_token
-from tests.conftest import test_user, client
 
 
 def test_signup(test_user, client):
