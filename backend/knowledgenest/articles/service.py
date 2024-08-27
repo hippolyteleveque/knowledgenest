@@ -13,7 +13,7 @@ from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_mistralai import MistralAIEmbeddings
 
 
-def process_new_article(url: str, user_id: str, db: Session):
+def process_new_article(url: str, user_id: UUID, db: Session):
     # First version, we only create the article in base,
     properties = extract_meta_properties(url)
     fields = convert_properties_to_fields(properties)
@@ -36,7 +36,7 @@ def fetch_articles(user_id: UUID, db: Session, offset: int = 0, limit: int = 10)
     return dict(articles_count=articles_count, articles=articles)
 
 
-def delete_article_by_id(article_id: str, user_id: str, db: Session):
+def delete_article_by_id(article_id: UUID, user_id: UUID, db: Session):
     article = (
         db.query(Article)
         .filter(Article.id == article_id, Article.user_id == user_id)
@@ -78,7 +78,7 @@ def process_doc(doc, article: Article, i: int):
     return pc_obj
 
 
-def delete_article_chunks_by_id(article_id: str, index):
+def delete_article_chunks_by_id(article_id: UUID, index):
     for ids in index.list(prefix=str(article_id)):
         index.delete(ids=ids)
     return True
