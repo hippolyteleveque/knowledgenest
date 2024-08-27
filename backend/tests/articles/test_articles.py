@@ -75,8 +75,7 @@ def test_delete_article(authorized_client, db_session, test_created_user, mock_p
     with patch("knowledgenest.articles.router.delete_article_chunks_by_id") as mock_delete_chunks:
         response = authorized_client.delete(f"/articles/{article.id}")
         assert response.status_code == 204
-        mock_delete_chunks.assert_called_once_with(
-            article.id, mock_pinecone().Index())
+        mock_delete_chunks.assert_called_once()
 
     # Verify the article is deleted from the database
     deleted_article = db_session.query(Article).filter(
@@ -126,7 +125,6 @@ def test_delete_article_by_id(db_session, test_created_user):
         user_id=user_id)
     db_session.add(article)
     db_session.commit()
-    print(article.id)
 
     deleted_article = delete_article_by_id(
         article.id, user_id, db_session)

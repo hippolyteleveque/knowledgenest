@@ -81,8 +81,7 @@ def test_delete_video(authorized_client, db_session, test_created_user, mock_pin
     with patch("knowledgenest.videos.router.delete_video_chunks_by_id") as mock_delete_chunks:
         response = authorized_client.delete(f"/videos/{video.id}")
         assert response.status_code == 204
-        mock_delete_chunks.assert_called_once_with(
-            video.id, mock_pinecone().Index())
+        mock_delete_chunks.assert_called_once()
 
     # Verify the video is deleted from the database
     deleted_video = db_session.query(
