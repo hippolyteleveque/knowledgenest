@@ -61,8 +61,11 @@ async def websocket_endpoint(id: str, token: str, db: DbSession, websocket: WebS
         await websocket.accept()
         while True:
             message = await websocket.receive_text()
-            await websocket.send_text("<START>")
+            send_start = True
             async for chunk in chat_stream(message, id, str(user.id), db):
+                if send_start:
+                    await websocket.send_text("<START>")
+                    send_start = False
                 await websocket.send_json(chunk)
 
     except Exception as e:

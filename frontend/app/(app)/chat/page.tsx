@@ -22,27 +22,27 @@ export default function Page() {
     }
   };
 
-  const formatMessage = (msg: any) => {
+  const formatMessage = (msg: ChatMessage, i: number) => {
     if (msg.type === "human") {
       return (
-        <div className="flex flex-row-reverse items-start gap-4">
-          <div className="rounded-lg bg-gray-900 p-4 text-sm text-gray-50 dark:bg-gray-50 dark:text-gray-900">
-            <p>{msg.content}</p>
+        <div className="flex flex-row-reverse items-start gap-4" key={i}>
+          <div className="rounded-lg bg-gray-900 p-4 text-sm text-gray-50 bg-primary">
+            <p>{msg.message}</p>
           </div>
         </div>
       );
     } else {
       return (
-        <div className="flex items-start gap-4">
+        <div className="flex items-start gap-4" key={i}>
           <div className="rounded-lg bg-gray-100 p-4 text-sm dark:bg-gray-800">
-            <p>{msg.content}</p>
+            <p>{msg.message}</p>
           </div>
         </div>
       );
     }
   };
 
-  const msgs = messages.map((el) => formatMessage(el));
+  const msgs = messages.map((el, i) => formatMessage(el, i));
 
   return (
     <main>
@@ -50,12 +50,12 @@ export default function Page() {
         <main className="flex-1 overflow-auto">
           <div className="mx-auto max-w-3xl space-y-4 p-4">{msgs}</div>
         </main>
-        <div className="border-t bg-gray-100 rounded-lg px-4 py-4 my-10 jdark:bg-gray-900">
+        <div className="border-t bg-gray-100 rounded-lg px-4 py-4 my-10 jdark:bg-gray-900 ">
           <form className="flex items-center gap-2" onSubmit={handleSubmit}>
             <Input
               type="text"
               placeholder="Type your message..."
-              className="flex-1"
+              // className="flex-1"
               id="message"
               name="message"
               value={currUserMsg ? currUserMsg : ""}

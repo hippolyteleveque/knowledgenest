@@ -9,12 +9,16 @@ type ChatProps = {
   messages: ChatMessage[];
   conversationId: string;
   requestResponse: boolean;
+  chatCallback: () => void;
 };
 
 export default function Chat(props: ChatProps) {
   const [currUserMsg, setCurrUserMsg] = useState<string | null>(null);
   const [messages, setMessages] = useState<ChatMessage[]>(props.messages);
   const [socket, setSocket] = useState<WebSocket | null>(null);
+  const [isWaitingMessage, setIsWaitingMessage] = useState<boolean>(
+    props.requestResponse
+  );
   const chatRef = useRef<any>(null);
 
   useEffect(() => {
@@ -35,10 +39,15 @@ export default function Chat(props: ChatProps) {
 
     ws.onmessage = (event) => {
       if (event.data === "<START>") {
+        // We call the callback
+        props.chatCallback();
+        // we initiate the message
         setMessages((prevMessages) => [
           ...prevMessages,
           { type: "ai", message: "" },
         ]);
+        // No more waiting
+        setIsWaitingMessage((prevState) => false);
       } else {
         const data = JSON.parse(event.data);
         if ("output" in data) {
@@ -51,8 +60,6 @@ export default function Chat(props: ChatProps) {
             const previousMessages = prevMessages.slice(0, -1);
             return [...previousMessages, newAiMessage];
           });
-        } else if ("sources" in data) {
-          console.log(data)
         }
       }
       if (chatRef.current) {
@@ -65,7 +72,7 @@ export default function Chat(props: ChatProps) {
     return () => {
       ws.close();
     };
-  }, [props.conversationId, props.requestResponse]);
+  }, [props.conversationId, props.requestResponse, props.chatCallback]);
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
@@ -73,6 +80,8 @@ export default function Chat(props: ChatProps) {
       socket.send(currUserMsg);
       setMessages((msgs) => [...msgs, { type: "human", message: currUserMsg }]);
       setCurrUserMsg(null);
+      // We are now waiting for AI message
+      setIsWaitingMessage(true);
     }
     if (chatRef.current) {
       chatRef.current.scrollTop = chatRef.current.scrollHeight;
@@ -105,7 +114,18 @@ export default function Chat(props: ChatProps) {
     <main>
       <div className="flex h-screen flex-col flex-1 pt-5">
         <main className="flex-1 overflow-auto" ref={chatRef}>
-          <div className="mx-auto max-w-3xl space-y-4 p-4">{msgs}</div>
+          <div className="mx-auto max-w-3xl space-y-4 p-4">
+            {msgs}
+            {isWaitingMessage ? (
+              <div className="flex items-start gap-4">
+                <div className="flex gap-2 rounded-lg bg-gray-100 p-4 dark:bg-gray-800">
+                  <div className="h-2 w-2 bg-black rounded-full animate-bounce [animation-delay:-1s]"></div>
+                  <div className="h-2 w-2 bg-black rounded-full animate-bounce [animation-delay:-0.035s]"></div>
+                  <div className="h-2 w-2 bg-black rounded-full animate-bounce"></div>
+                </div>
+              </div>
+            ) : null}
+          </div>
         </main>
         <div className="border-t bg-gray-100 rounded-lg px-4 py-4 my-10 jdark:bg-gray-900">
           <form className="flex items-center gap-2" onSubmit={handleSubmit}>

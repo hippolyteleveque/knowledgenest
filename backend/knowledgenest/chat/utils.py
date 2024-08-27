@@ -88,17 +88,17 @@ def parse_retriever_input(params: Dict):
 
 def parse_sources(docs: List[Document]) -> List[Dict]:
     """Extract unique sources with useful information"""
-    ids = set()
-    sources = []
+    sources = {}
     for doc in docs:
         doc_id = doc.metadata["content_id"]
-        if doc_id not in ids:
-            sources.append(
-                {
-                    "id": doc_id,
-                    "type": doc.metadata["type"],
-                    "score": doc.metadata["score"],
-                }
-            )
-            ids.add(doc_id)
-    return sources
+        if doc_id not in sources:
+            sources[doc_id] = {
+                "id": doc_id,
+                "type": doc.metadata["type"],
+                "score": doc.metadata["score"],
+            }
+
+        elif sources[doc_id]["score"] < doc.metadata["score"]:
+            # We take the best score of each document
+            sources[doc_id]["score"] = doc.metadata["score"]
+    return list(sources.values())
