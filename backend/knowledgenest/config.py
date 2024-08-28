@@ -2,6 +2,7 @@ import os
 
 
 def load_env_var(var_name: str) -> str:
+    """Raise errror if one of the necessary values has not been provided"""
     val = os.getenv(var_name)
     if not val:
         raise ValueError(
