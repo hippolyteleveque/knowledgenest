@@ -1,6 +1,8 @@
 from knowledgenest.database import Base
 from knowledgenest.chat.models import ChatMessage, ChatConversation, ConversationContextArticle, ConversationContextVideo
-from knowledgenest.auth.models import User
+from knowledgenest.articles.models import Article
+from knowledgenest.videos.models import Video
+from knowledgenest.auth.models import User, UserSetting
 from logging.config import fileConfig
 import os
 from sqlalchemy import engine_from_config
