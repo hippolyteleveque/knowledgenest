@@ -1,3 +1,4 @@
+from uuid import UUID
 from fastapi import Depends, HTTPException
 from fastapi.security import OAuth2PasswordBearer
 import time
@@ -9,7 +10,7 @@ from jose.exceptions import ExpiredSignatureError
 from sqlalchemy.orm.session import Session
 from starlette.status import HTTP_401_UNAUTHORIZED, HTTP_404_NOT_FOUND
 
-from knowledgenest.auth.models import User
+from knowledgenest.auth.models import User, UserSetting
 from knowledgenest.auth.schema import UserBase
 from knowledgenest.auth.utils import create_hash
 from knowledgenest.database import DbSession
@@ -46,7 +47,9 @@ def create_user(email: str, password: str, db: Session):
     hashed_password_binary = create_hash(password)
     hashed_password = hashed_password_binary.decode("utf-8")
     new_user = User(email=email, password=hashed_password)
+    setting = UserSetting(user=new_user)
     db.add(new_user)
+    db.add(setting)
     db.commit()
     db.refresh(new_user)
     return new_user
@@ -88,3 +91,13 @@ def get_current_user(
 
 
 CurrentUser = Annotated[UserBase, Depends(get_current_user)]
+
+
+def update_user_settings(ai_provider: str, user_id: UUID, db: Session) -> UserSetting:
+    setting = db.query(UserSetting).filter(UserSetting.user_id == user_id).first()
+    if not setting:
+        raise ValueError(f"Did not found any settings attached to user {user_id}")
+    setting.ai_provider = ai_provider
+    db.commit()
+    db.refresh(setting)
+    return setting

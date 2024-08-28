@@ -200,3 +200,25 @@ export async function addVideo(formData: FormData) {
   }
   revalidatePath("/videos");
 }
+
+const SettingsSchema = z.object({
+  aiProvider: z.string(),
+});
+
+export async function updateSettings(formData: FormData) {
+  const validatedFields = SettingsSchema.parse({
+    aiProvider: formData.get("aiProvider"),
+  });
+  const { aiProvider } = validatedFields;
+  const updateSettingsUrl = `${process.env.API_HOST}/api/v1/users/settings`;
+  const bearerToken = cookies().get("jwtToken")?.value;
+  const response = await fetch(updateSettingsUrl, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${bearerToken}`
+    },
+    body: JSON.stringify({ ai_provider: aiProvider }),
+  });
+
+}

@@ -8,7 +8,10 @@ from starlette.status import HTTP_404_NOT_FOUND
 
 from knowledgenest.videos.models import Video
 from knowledgenest.videos.utils import extract_info_from_url
-from knowledgenest.lib import MISTRAL_EMBEDDING_MODEL, MISTRALAI_API_KEY
+from knowledgenest.config import config
+
+
+MISTRAL_EMBEDDING_MODEL = config["MISTRAL_EMBEDDING_MODEL"]
 
 
 def fetch_videos(user_id: UUID, db: Session, offset: int = 0, limit: int = 10):
@@ -54,7 +57,7 @@ def embed_ang_ingest_video(video: Video, index):
 
 def process_doc(doc, video: Video, i: int):
     embeddings = MistralAIEmbeddings(
-        model=MISTRAL_EMBEDDING_MODEL, api_key=MISTRALAI_API_KEY
+        model=MISTRAL_EMBEDDING_MODEL,
     )
     pc_obj = dict()
     pc_obj["metadata"] = dict(
