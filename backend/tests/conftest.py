@@ -1,12 +1,25 @@
+
 import pytest
 import os
 from unittest.mock import Mock, patch
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+from starlette.config import environ
 
-from knowledgenest.database import Base, get_db
+
+environ["OPENAI_API_KEY"] = "test_openai_key"
+environ["OPENAI_LLM_MODEL"] = "gpt-4o-mini"
+environ["MISTRAL_API_KEY"] = "test_mistral_key"
+environ["MISTRAL_EMBEDDING_MODEL"] = "mistral-embed"
+environ["MISTRAL_LLM_MODEL"] = "open-mistral-nemo"
+environ["ANTHROPIC_API_KEY"] = "test_anthropic_key"
+environ["PINECONE_API_KEY"] = "test_pinecone_key"
+environ["PINECONE_INDEX_NAME"] = "knowledgenest"
+environ["ANTHROPIC_LLM_MODEL"] = "claude-3-haiku-20240307"
+
 from knowledgenest.auth.service import create_access_token, create_user
+from knowledgenest.database import Base, get_db
 
 # Setup test database
 SQLALCHEMY_DATABASE_URL = "sqlite:///./test.db"
@@ -68,7 +81,9 @@ def pytest_sessionfinish(session, exitstatus):
     """
     Called after whole test run finished, right before returning the exit status to the system.
     """
-    os.remove("./test.db")
+    test_db_path = "./test.db"
+    if os.path.exists(test_db_path):
+        os.remove(test_db_path)
 
 
 @pytest.fixture

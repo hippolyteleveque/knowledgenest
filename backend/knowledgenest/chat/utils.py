@@ -14,12 +14,12 @@ from langchain_core.documents import Document
 from langchain_core.runnables import chain
 
 from knowledgenest.vector_database import get_vector_db
-from knowledgenest.config import (
-    MISTRAL_LLM_MODEL,
-    MISTRAL_EMBEDDING_MODEL,
-    OPENAI_LLM_MODEL,
-    ANTHROPIC_LLM_MODEL,
-)
+from knowledgenest.config import config
+
+MISTRAL_LLM_MODEL = config["MISTRAL_LLM_MODEL"]
+MISTRAL_EMBEDDING_MODEL = config["MISTRAL_EMBEDDING_MODEL"]
+OPENAI_LLM_MODEL = config["OPENAI_LLM_MODEL"]
+ANTHROPIC_LLM_MODEL = config["ANTHROPIC_LLM_MODEL"]
 
 SYSTEM_PROMPT = """You are a useful assistant that answers politey to users questions. 
             Your answers are based on your general knowledge but 
