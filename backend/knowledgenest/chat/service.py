@@ -4,6 +4,7 @@ from sqlalchemy import and_, desc
 from sqlalchemy.orm.session import Session
 
 
+from knowledgenest.auth.models import User
 from knowledgenest.chat.models import ConversationContextArticle
 from knowledgenest.chat.models import ConversationContextVideo
 from knowledgenest.chat.models import ChatConversation, ChatMessage
@@ -12,7 +13,7 @@ from datetime import datetime
 
 
 def fetch_conversation(
-    conversation_id: str, user_id: str, db: Session
+    conversation_id: UUID, user_id: UUID, db: Session
 ) -> ChatConversation:
     """Fetch a specific conversation"""
     conversation = (
@@ -30,7 +31,7 @@ def fetch_conversation(
     return conversation
 
 
-def fetch_conversations(user_id: str, db: Session) -> List[ChatConversation]:
+def fetch_conversations(user_id: UUID, db: Session) -> List[ChatConversation]:
     """Returns all conversations of the user"""
     conversations = (
         db.query(ChatConversation)
@@ -42,14 +43,14 @@ def fetch_conversations(user_id: str, db: Session) -> List[ChatConversation]:
 
 
 async def chat_stream(
-    new_message: str, conversation_id: str, user_id: str, db: Session
+    new_message: str, conversation_id: UUID, user: User, db: Session
 ):
     """Continue the chat with the user on the specified conversation"""
     if new_message != "<START>":  # TODO change this
         add_human_message(new_message, conversation_id, db)
-    db_conversation = fetch_conversation(conversation_id, user_id, db)
+    db_conversation = fetch_conversation(conversation_id, user.id, db)
     messages = [msg.convert_to_langchain() for msg in db_conversation.ordered_messages]
-    chain = get_chain(str(user_id))
+    chain = get_chain(user)
     resp = chain.astream(dict(messages=messages))
     total_message = ""
     async for chunk in resp:
@@ -65,7 +66,7 @@ async def chat_stream(
     add_ai_message(total_message, conversation_id, db)
 
 
-def add_human_message(content: str, conversation_id: str, db: Session) -> ChatMessage:
+def add_human_message(content: str, conversation_id: UUID, db: Session) -> ChatMessage:
     """Record a new Human message in the db"""
     new_message = ChatMessage(
         content=content,
@@ -79,7 +80,7 @@ def add_human_message(content: str, conversation_id: str, db: Session) -> ChatMe
     return new_message
 
 
-def add_ai_message(content: str, conversation_id: str, db: Session) -> ChatMessage:
+def add_ai_message(content: str, conversation_id: UUID, db: Session) -> ChatMessage:
     """Add a new AI message on the database"""
     new_message = ChatMessage(
         content=content,
@@ -93,7 +94,7 @@ def add_ai_message(content: str, conversation_id: str, db: Session) -> ChatMessa
     return new_message
 
 
-def add_conversation(user_id: str, db: Session) -> ChatConversation:
+def add_conversation(user_id: UUID, db: Session) -> ChatConversation:
     """Create a new conversation"""
     new_conversation = ChatConversation(user_id=user_id, created_at=datetime.now())
     db.add(new_conversation)

@@ -1,4 +1,5 @@
 from typing import List
+from uuid import UUID
 from fastapi import APIRouter, WebSocket
 from knowledgenest.database import DbSession
 from knowledgenest.auth.service import CurrentUser, curr_user
@@ -25,8 +26,7 @@ def create_conversation(
     request: ChatMessageIn, current_user: CurrentUser, db: DbSession
 ):
     conversation = add_conversation(current_user.id, db)
-    conversation_id = str(conversation.id)
-    add_human_message(request.message, conversation_id, db)
+    add_human_message(request.message, conversation.id, db)
     db.refresh(conversation)  # so that it has the messages
     return conversation
 
@@ -49,20 +49,20 @@ def get_conversation(id: str, current_user: CurrentUser, db: DbSession):
 
 
 @router.get("/{id}/sources")
-def get_conversation_sources(id: str, current_user: CurrentUser, db: DbSession):
+def get_conversation_sources(id: UUID, current_user: CurrentUser, db: DbSession):
     videos, articles = fetch_sources(id, current_user.id, db)
     return dict(videos=videos, articles=articles)
 
 
 @router.websocket("/{id}/ws")
-async def websocket_endpoint(id: str, token: str, db: DbSession, websocket: WebSocket):
+async def websocket_endpoint(id: UUID, token: str, db: DbSession, websocket: WebSocket):
     try:
         user = curr_user(db, token)
         await websocket.accept()
         while True:
             message = await websocket.receive_text()
             send_start = True
-            async for chunk in chat_stream(message, id, str(user.id), db):
+            async for chunk in chat_stream(message, id, user, db):
                 if send_start:
                     await websocket.send_text("<START>")
                     send_start = False
