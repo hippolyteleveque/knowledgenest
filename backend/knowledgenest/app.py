@@ -1,7 +1,7 @@
 import os
 from fastapi import FastAPI, Response
 from fastapi.middleware.cors import CORSMiddleware
-from knowledgenest.auth.router import router as auth_router
+from knowledgenest.auth.router import auth_router, users_router
 from knowledgenest.articles.router import router as articles_router
 from knowledgenest.chat.router import router as chat_router
 from knowledgenest.videos.router import router as videos_router
@@ -27,6 +27,7 @@ def configure_cors():
 configure_cors()
 
 app.include_router(auth_router)
+app.include_router(users_router)
 app.include_router(articles_router)
 app.include_router(chat_router)
 app.include_router(videos_router)

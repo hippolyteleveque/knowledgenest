@@ -7,16 +7,19 @@ from langchain_core.runnables import Runnable, RunnableParallel, RunnableLambda
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.vectorstores import VectorStore
 from langchain_mistralai import ChatMistralAI, MistralAIEmbeddings
+from langchain_openai import ChatOpenAI
+from langchain_anthropic import ChatAnthropic
 from langchain_pinecone import PineconeVectorStore
 from langchain_core.documents import Document
 from langchain_core.runnables import chain
 
 from knowledgenest.vector_database import get_vector_db
-from knowledgenest.lib import (
-    MISTRAL_LLM_MODEL,
-    MISTRAL_EMBEDDING_MODEL,
-    MISTRALAI_API_KEY,
-)
+from knowledgenest.config import config
+
+MISTRAL_LLM_MODEL = config["MISTRAL_LLM_MODEL"]
+MISTRAL_EMBEDDING_MODEL = config["MISTRAL_EMBEDDING_MODEL"]
+OPENAI_LLM_MODEL = config["OPENAI_LLM_MODEL"]
+ANTHROPIC_LLM_MODEL = config["ANTHROPIC_LLM_MODEL"]
 
 SYSTEM_PROMPT = """You are a useful assistant that answers politey to users questions. 
             Your answers are based on your general knowledge but 
@@ -45,7 +48,7 @@ def create_retriever(vectorstore: VectorStore, filter: Dict) -> Runnable:
     return retrieve
 
 
-def get_chain(user_id: str):
+def get_chain(user):
     prompt = ChatPromptTemplate.from_messages(
         [
             ("system", SYSTEM_PROMPT),
@@ -53,12 +56,12 @@ def get_chain(user_id: str):
         ]
     )
     index = get_vector_db()
-    llm = ChatMistralAI(model_name=MISTRAL_LLM_MODEL, api_key=MISTRALAI_API_KEY)
-    embeddings = MistralAIEmbeddings(
-        model=MISTRAL_EMBEDDING_MODEL, api_key=MISTRALAI_API_KEY
-    )
+    llm = get_llm(user.setting.ai_provider)
+    # llm = ChatMistralAI(model_name=MISTRAL_LLM_MODEL, api_key=MISTRAL_API_KEY)
+    # We always embed with mistral for index consistency
+    embeddings = MistralAIEmbeddings(model=MISTRAL_EMBEDDING_MODEL)
     vector_store = PineconeVectorStore(index=index, embedding=embeddings)
-    retriever = create_retriever(vector_store, dict(user_id=user_id))
+    retriever = create_retriever(vector_store, dict(user_id=str(user.id)))
     chain = (
         dict(docs=parse_retriever_input | retriever, messages=itemgetter("messages"))
         | RunnableParallel(
@@ -102,3 +105,15 @@ def parse_sources(docs: List[Document]) -> List[Dict]:
             # We take the best score of each document
             sources[doc_id]["score"] = doc.metadata["score"]
     return list(sources.values())
+
+
+def get_llm(ai_provider: str) -> Runnable:
+    """Returns the langchain runnable llm based on the config"""
+    if ai_provider == "mistral":
+        return ChatMistralAI(model_name=MISTRAL_LLM_MODEL)
+    elif ai_provider == "anthropic":
+        return ChatAnthropic(model=ANTHROPIC_LLM_MODEL)
+    elif ai_provider == "openai":
+        return ChatOpenAI(model=OPENAI_LLM_MODEL)
+    else:
+        raise ValueError("Unknown provider {ai_provider}")

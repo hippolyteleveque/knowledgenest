@@ -1,3 +1,4 @@
+from typing import Literal
 from pydantic import UUID4, BaseModel
 
 
@@ -19,7 +20,17 @@ class UserIn(BaseModel):
     password: str
 
 
+class UserSettings(BaseModel):
+    ai_provider: Literal["mistral", "anthropic", "openai"]
+
+
 class UserBase(BaseModel):
     id: UUID4
     email: str
+    setting: UserSettings
     password: str
+
+
+class UserOut(BaseModel):
+    email: str
+    setting: UserSettings
