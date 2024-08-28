@@ -5,7 +5,7 @@ from pinecone.data.index import Index
 from typing import Annotated
 import time
 
-from knowledgenest.lib import PINECONE_API_KEY, PINECONE_INDEX_NAME
+from knowledgenest.config import PINECONE_API_KEY, PINECONE_INDEX_NAME
 
 EMBEDDING_MODEL_DIM = 1024
 SIM_METRIC = "dotproduct"
