@@ -42,9 +42,7 @@ def fetch_conversations(user_id: UUID, db: Session) -> List[ChatConversation]:
     return conversations
 
 
-async def chat_stream(
-    new_message: str, conversation_id: UUID, user: User, db: Session
-):
+async def chat_stream(new_message: str, conversation_id: UUID, user: User, db: Session):
     """Continue the chat with the user on the specified conversation"""
     if new_message != "<START>":  # TODO change this
         add_human_message(new_message, conversation_id, db)
