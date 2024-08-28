@@ -91,3 +91,20 @@ export async function fetchSources(conversationId: string) {
   // TODO: error handling
   return {};
 }
+export async function getMyUser() {
+  const bearerToken = cookies().get("jwtToken")?.value;
+  const myUserUrl = `${process.env.API_HOST}/api/v1/users/me`;
+  const response = await fetch(myUserUrl, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${bearerToken}`,
+    },
+  });
+  if (response.ok) {
+    let myUser = await response.json()
+    console.log(myUser)
+    return myUser;
+  }
+  // TODO: error handling
+  return null;
+}
