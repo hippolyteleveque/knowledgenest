@@ -12,9 +12,7 @@ app = FastAPI(root_path="/api/v1")
 
 def configure_cors():
     if os.environ.get("ENVIRONMENT", "DEVELOPMENT") == "DEVELOPMENT":
-        origins = [
-            "http://localhost:3000",
-        ]
+        origins = ["*"]
         app.add_middleware(
             CORSMiddleware,
             allow_origins=origins,
