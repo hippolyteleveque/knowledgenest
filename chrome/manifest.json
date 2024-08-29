@@ -1,0 +1,12 @@
+{
+  "manifest_version": 3,
+  "name": "Knowledgenest",
+  "version": "1.0",
+  "description": "Add the current site as a new Knowledgenest content",
+  "permissions": ["activeTab", "storage"],
+  "action": {},
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  }
+}
