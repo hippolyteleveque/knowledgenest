@@ -102,7 +102,6 @@ export async function getMyUser() {
   });
   if (response.ok) {
     let myUser = await response.json()
-    console.log(myUser)
     return myUser;
   }
   // TODO: error handling
