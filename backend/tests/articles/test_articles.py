@@ -105,7 +105,7 @@ def test_fetch_articles(db_session, test_created_user):
     user_id = test_created_user["id"]
     for i in range(5):
         article = Article(
-            title=f"Test Article {i}", url=f"http://test{i}.com", user_id=user_id)
+            title=f"Test Article {i}", url=f"http://test{i}.com", user_id=user_id, description=f"Article {i}", imageUrl=f"http://article.com/{i}")
         db_session.add(article)
     db_session.commit()
 
