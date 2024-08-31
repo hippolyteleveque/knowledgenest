@@ -29,13 +29,15 @@ SYSTEM_PROMPT = """You are a useful assistant that answers politey to users ques
 def create_retriever(vectorstore: VectorStore, filter: Dict) -> Runnable:
 
     def retrieve_documents(query: str, vectorstore, filter) -> List[Document]:
-        docs, scores = zip(
-            *vectorstore.similarity_search_with_score(query, k=3, filter=filter)
-        )
-        for doc, score in zip(docs, scores):
-            doc.metadata["score"] = score
+        if results := vectorstore.similarity_search_with_score(
+            query, k=3, filter=filter
+        ):
+            docs, scores = zip(*results)
+            for doc, score in zip(docs, scores):
+                doc.metadata["score"] = score
 
-        return list(docs)
+            return list(docs)
+        return []
 
     retriever = functools.partial(
         retrieve_documents, vectorstore=vectorstore, filter=filter
