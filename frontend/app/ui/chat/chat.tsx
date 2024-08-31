@@ -101,16 +101,14 @@ export default function Chat(props: ChatProps) {
     } else {
       return (
         <div className="flex items-start gap-4" key={i}>
-          <div className="rounded-lg bg-gray-100 p-4 text-sm dark:bg-gray-800 w-full">
-            {/* Use a pre tag with whitespace-pre-wrap to preserve formatting */}
-            <pre className="whitespace-pre-wrap font-sans">
-              {/* Use dangerouslySetInnerHTML to render markdown */}
-              <div
-                dangerouslySetInnerHTML={{
-                  __html: marked.parse(msg.message, { breaks: true }),
-                }}
-              />
-            </pre>
+          <div className="rounded-lg bg-gray-100 pt-4 pr-4 pl-4 text-sm dark:bg-gray-800 w-full">
+            {/* Remove the pre tag and use a div with whitespace-pre-wrap */}
+            <div
+              className="whitespace-pre-wrap font-sans"
+              dangerouslySetInnerHTML={{
+                __html: marked.parse(msg.message, { breaks: true }),
+              }}
+            />
           </div>
         </div>
       );
