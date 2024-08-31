@@ -13,6 +13,10 @@ def load_env_var(var_name: str) -> str:
 
 
 def init_config() -> Dict[str, str]:
+    environment = load_env_var("ENVIRONMENT")
+    pc_idx_name = (
+        "knowledgenest-dev" if environment == "DEVELOPMENT" else "knowledegenest-prod"
+    )
     return {
         "OPENAI_API_KEY": load_env_var("OPENAI_API_KEY"),
         "OPENAI_LLM_MODEL": "gpt-4o-mini",
@@ -21,7 +25,7 @@ def init_config() -> Dict[str, str]:
         "MISTRAL_LLM_MODEL": "open-mistral-nemo",
         "ANTHROPIC_API_KEY": load_env_var("ANTHROPIC_API_KEY"),
         "PINECONE_API_KEY": load_env_var("PINECONE_API_KEY"),
-        "PINECONE_INDEX_NAME": "knowledgenest",
+        "PINECONE_INDEX_NAME": pc_idx_name,
         "ANTHROPIC_LLM_MODEL": "claude-3-haiku-20240307",
     }
 
