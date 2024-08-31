@@ -1,6 +1,6 @@
 from typing import List
 from uuid import UUID
-from fastapi import APIRouter, WebSocket
+from fastapi import APIRouter, HTTPException, WebSocket
 from knowledgenest.database import DbSession
 from knowledgenest.auth.service import CurrentUser, curr_user
 from knowledgenest.chat.schema import (
@@ -62,11 +62,15 @@ async def websocket_endpoint(id: UUID, token: str, db: DbSession, websocket: Web
         while True:
             message = await websocket.receive_text()
             send_start = True
-            async for chunk in chat_stream(message, id, user, db):
+            stream = chat_stream(message, id, user, db)
+
+            async for chunk in stream:
                 if send_start:
                     await websocket.send_text("<START>")
                     send_start = False
                 await websocket.send_json(chunk)
-
     except Exception as e:
-        print(e)
+        # await websocket.close()
+        raise HTTPException(
+            status_code=500, detail=f"The following error occurred: {e}"
+        )

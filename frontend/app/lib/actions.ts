@@ -38,19 +38,25 @@ export async function login(formData: FormData) {
   authForm.append("username", email);
   authForm.append("password", password);
   const loginUrl = `${process.env.API_HOST}/api/v1/auth/login`;
-  const response = await fetch(loginUrl, {
-    method: "POST",
-    body: authForm,
-  });
-
-  if (response.ok) {
-    const { access_token } = await response.json();
-    cookies().set("jwtToken", access_token, {
-      secure: true,
-      sameSite: "lax",
-      path: "/",
+  try {
+    const response = await fetch(loginUrl, {
+      method: "POST",
+      body: authForm,
     });
-    redirect("/articles");
+
+    if (response.ok) {
+      const { access_token } = await response.json();
+      cookies().set("jwtToken", access_token, {
+        secure: true,
+        sameSite: "lax",
+        path: "/",
+      });
+      return {sucess: true}
+    } else {
+      return { error: "Invalid email or password" };
+    }
+  } catch (error) {
+    return { error: "An error occurred. Please try again." };
   }
 }
 
@@ -150,7 +156,7 @@ export async function startConversation(message: string) {
   });
   const resp = await response.json();
   revalidatePath("/chat");
-  return resp; 
+  return resp;
 }
 
 export async function deleteVideo(videoId: string) {
@@ -216,9 +222,12 @@ export async function updateSettings(formData: FormData) {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${bearerToken}`
+      Authorization: `Bearer ${bearerToken}`,
     },
     body: JSON.stringify({ ai_provider: aiProvider }),
   });
-
+  if (!response.ok) {
+    return { message: "A problem occured while updating the provider", success: false };
+  }
+  return { message: "Successfully updated the model provider."}
 }

@@ -18,7 +18,7 @@ class Article(Base):
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
     )
     url: Mapped[str] = mapped_column(String, index=True)
-    description: Mapped[str] = mapped_column(String)
+    description: Mapped[str | None] = mapped_column(String, nullable=True)
     imageUrl: Mapped[str] = mapped_column(String)
     title: Mapped[str] = mapped_column(String)
 

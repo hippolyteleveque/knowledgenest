@@ -20,7 +20,7 @@ def initialize_pinecone():
     global pc
     if pc is None:
         pc = Pinecone(api_key=PINECONE_API_KEY)
-        spec = ServerlessSpec(cloud="aws", region="us-east-1")
+        spec = ServerlessSpec(cloud="gcp", region="europe-west4")
         existing_indexes = [index_info["name"] for index_info in pc.list_indexes()]
 
         if PINECONE_INDEX_NAME not in existing_indexes:

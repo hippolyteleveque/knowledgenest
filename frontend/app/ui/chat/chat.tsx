@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { Input } from "@/components/ui/input";
 import { ChatMessage } from "@/app/lib/definitions";
 import Cookies from "js-cookie";
+import { marked } from "marked";
 
 type ChatProps = {
   messages: ChatMessage[];
@@ -100,8 +101,16 @@ export default function Chat(props: ChatProps) {
     } else {
       return (
         <div className="flex items-start gap-4" key={i}>
-          <div className="rounded-lg bg-gray-100 p-4 text-sm dark:bg-gray-800">
-            <p>{msg.message}</p>
+          <div className="rounded-lg bg-gray-100 p-4 text-sm dark:bg-gray-800 w-full">
+            {/* Use a pre tag with whitespace-pre-wrap to preserve formatting */}
+            <pre className="whitespace-pre-wrap font-sans">
+              {/* Use dangerouslySetInnerHTML to render markdown */}
+              <div
+                dangerouslySetInnerHTML={{
+                  __html: marked.parse(msg.message, { breaks: true }),
+                }}
+              />
+            </pre>
           </div>
         </div>
       );
