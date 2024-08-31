@@ -1,12 +1,40 @@
+"use client";
 import { login } from "@/app/lib/actions";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useFormStatus } from "react-dom";
+
+function LoginButton() {
+  const { pending } = useFormStatus();
+
+  return (
+    <Button type="submit" className="w-full" disabled={pending}>
+      {pending ? "Logging in..." : "Login"}
+    </Button>
+  );
+}
 
 export default function Form() {
+  const [error, setError] = useState("");
+  const router = useRouter();
+
+  async function handleLogin(formData: FormData) {
+    setError("");
+    const result = await login(formData);
+    if (result.error) {
+      setError(result.error);
+    } else if (result.sucess) {
+      router.push("/articles");
+    }
+  }
+
   return (
-    <form className="grid gap-4" action={login}>
+    <form className="grid gap-4" action={handleLogin}>
+      {error && <p className="text-red-500 text-sm">{error}</p>}
       <div className="grid gap-2">
         <Label htmlFor="email">Email</Label>
         <Input
@@ -26,9 +54,7 @@ export default function Form() {
         </div>
         <Input id="password" type="password" name="password" required />
       </div>
-      <Button type="submit" className="w-full">
-        Login
-      </Button>
+      <LoginButton />
     </form>
   );
 }
