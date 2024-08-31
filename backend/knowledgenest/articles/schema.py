@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 from uuid import UUID
 from pydantic import BaseModel
 
@@ -11,7 +11,7 @@ class ArticleOut(BaseModel):
     id: UUID
     url: str
     imageUrl: str
-    description: str
+    description: Optional[str]
     title: str
 
 
