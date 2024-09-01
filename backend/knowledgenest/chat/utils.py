@@ -1,4 +1,3 @@
-import functools
 from operator import itemgetter
 from typing import Dict, List
 
@@ -27,8 +26,10 @@ SYSTEM_PROMPT = """You are a useful assistant that answers politey to users ques
 
 
 def create_retriever(vectorstore: VectorStore, filter: Dict) -> Runnable:
+    """Create and returns a retriever with the specified filters"""
 
-    def retrieve_documents(query: str, vectorstore, filter) -> List[Document]:
+    @chain
+    def retrieve(query: str) -> List[Document]:
         if results := vectorstore.similarity_search_with_score(
             query, k=3, filter=filter
         ):
@@ -38,14 +39,6 @@ def create_retriever(vectorstore: VectorStore, filter: Dict) -> Runnable:
 
             return list(docs)
         return []
-
-    retriever = functools.partial(
-        retrieve_documents, vectorstore=vectorstore, filter=filter
-    )
-
-    @chain
-    def retrieve(query: str) -> List[Document]:
-        return retriever(query)
 
     return retrieve
 
@@ -59,7 +52,6 @@ def get_chain(user):
     )
     index = get_vector_db()
     llm = get_llm(user.setting.ai_provider)
-    # llm = ChatMistralAI(model_name=MISTRAL_LLM_MODEL, api_key=MISTRAL_API_KEY)
     # We always embed with mistral for index consistency
     embeddings = MistralAIEmbeddings(model=MISTRAL_EMBEDDING_MODEL)
     vector_store = PineconeVectorStore(index=index, embedding=embeddings)
