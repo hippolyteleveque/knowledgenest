@@ -18,6 +18,8 @@ environ["PINECONE_API_KEY"] = "test_pinecone_key"
 environ["PINECONE_INDEX_NAME"] = "knowledgenest"
 environ["ANTHROPIC_LLM_MODEL"] = "claude-3-haiku-20240307"
 environ["ENVIRONMENT"] = "TESTING"
+environ["LANGCHAIN_API_KEY"] = "test_langchain_api_key"
+environ["LANGCHAIN_PROJECT"] = "test_langchain_project"
 
 from knowledgenest.auth.service import create_access_token, create_user
 from knowledgenest.database import Base, get_db

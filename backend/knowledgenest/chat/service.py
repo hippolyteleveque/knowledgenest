@@ -47,6 +47,7 @@ async def chat_stream(new_message: str, conversation_id: UUID, user: User, db: S
     if new_message != "<START>":  # TODO change this
         add_human_message(new_message, conversation_id, db)
     db_conversation = fetch_conversation(conversation_id, user.id, db)
+    # serialization
     messages = [msg.convert_to_langchain() for msg in db_conversation.ordered_messages]
     chain = get_chain(user)
     resp = chain.astream(dict(messages=messages))
