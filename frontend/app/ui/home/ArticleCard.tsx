@@ -11,20 +11,23 @@ export function ArticleCard({ article }: { article: Article }) {
   const deleteArticleWithId = deleteArticle.bind(null, article.id);
   const handleArticleDeletion = async () => await deleteArticleWithId();
   return (
-    <Card>
-      <CardContent className="flex justify-center p-4 pt-0">
-        <Image
-          src={article.imageUrl}
-          alt={article.description}
-          width={320}
-          height={240}
-        />
+    <Card className="max-w-[280px] flex flex-col">
+      <CardContent className="p-4 pt-0 flex-grow">
+        <div className="relative w-full h-48 mb-2">
+          <Image
+            src={article.imageUrl}
+            alt={article.description}
+            fill
+            objectFit="cover"
+            className="rounded-md"
+          />
+        </div>
+        <h4 className="scroll-m-20 text-sm font-semibold tracking-tight text-center line-clamp-2">
+          {article.title}
+        </h4>
       </CardContent>
-      <h4 className="scroll-m-20 text-sm font-semibold tracking-tight text-center">
-        {article.title}
-      </h4>
-      <CardFooter className="flex justify-between py-5 w-full">
-        <Button className="w-24">
+      <CardFooter className="flex justify-between py-3 w-full">
+        <Button className="w-24" asChild>
           <a href={article.url}>View</a>
         </Button>
         <Button

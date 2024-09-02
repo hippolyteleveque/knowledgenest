@@ -18,7 +18,7 @@ function LoginButton() {
   );
 }
 
-export default function Form() {
+export default function LoginForm() {
   const [error, setError] = useState("");
   const router = useRouter();
 
@@ -43,6 +43,7 @@ export default function Form() {
           name="email"
           placeholder="m@example.com"
           required
+          autoFocus
         />
       </div>
       <div className="grid gap-2">
