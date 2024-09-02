@@ -17,15 +17,18 @@ export async function signup(formData: FormData) {
   });
   const { email, password } = validatedFields;
   const signupUrl = `${process.env.API_HOST}/api/v1/auth/signup`;
-  const response = await fetch(signupUrl, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ email, password }),
-  });
-  // TODO wait for the response to get finish properly and handle errors
-  redirect("/login");
+  try {
+    const response = await fetch(signupUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ email, password }),
+    });
+    return { success: true };
+  } catch (error) {
+    return { error: "An error occurred. Please try again." };
+  }
 }
 
 export async function login(formData: FormData) {
@@ -51,7 +54,7 @@ export async function login(formData: FormData) {
         sameSite: "lax",
         path: "/",
       });
-      return {sucess: true}
+      return { sucess: true };
     } else {
       return { error: "Invalid email or password" };
     }
@@ -227,7 +230,10 @@ export async function updateSettings(formData: FormData) {
     body: JSON.stringify({ ai_provider: aiProvider }),
   });
   if (!response.ok) {
-    return { message: "A problem occured while updating the provider", success: false };
+    return {
+      message: "A problem occured while updating the provider",
+      success: false,
+    };
   }
-  return { message: "Successfully updated the model provider."}
+  return { message: "Successfully updated the model provider." };
 }

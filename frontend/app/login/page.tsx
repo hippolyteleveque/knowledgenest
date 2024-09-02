@@ -1,5 +1,3 @@
-"use client";
-
 import Link from "next/link";
 
 import {
@@ -9,7 +7,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import Form from "../ui/login/login-form";
+import LoginForm from "@/app/ui/login/login-form";
 
 export default function Page() {
   return (
@@ -22,7 +20,7 @@ export default function Page() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <Form />
+          <LoginForm />
           <div className="mt-4 text-center text-sm">
             Don&apos;t have an account?{" "}
             <Link href="/signup" className="underline">
