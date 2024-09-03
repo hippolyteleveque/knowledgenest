@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import Literal
 from pydantic import UUID4, BaseModel
 
@@ -18,6 +19,12 @@ class TokenIn(BaseModel):
 class UserIn(BaseModel):
     email: str
     password: str
+
+
+class LoginOut(BaseModel):
+    access_token: str
+    token_expiration_time: datetime
+    email: str
 
 
 class UserSettings(BaseModel):

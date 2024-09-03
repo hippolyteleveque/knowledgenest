@@ -1,5 +1,7 @@
 import os
-from typing import Dict
+from typing import Dict, ClassVar, Optional
+
+from pydantic import BaseModel
 
 
 def load_env_var(var_name: str) -> str:
@@ -42,16 +44,28 @@ def init_config() -> Dict[str, str]:
     }
 
 
-# Initialize an empty config dictionary
-config: Dict[str, str] = {}
+class Config(BaseModel):
+    OPENAI_API_KEY: str
+    OPENAI_LLM_MODEL: str = "gpt-4o-mini"
+    MISTRAL_API_KEY: str
+    MISTRAL_EMBEDDING_MODEL: str = "mistral-embed"
+    MISTRAL_LLM_MODEL: str = "open-mistral-nemo"
+    ANTHROPIC_API_KEY: str
+    ANTHROPIC_LLM_MODEL: str
+    PINECONE_API_KEY: str
+    PINECONE_INDEX_NAME: str
+    LANGCHAIN_API_KEY: str
+    LANGCHAIN_PROJECT: str
+    LANGCHAIN_TRACING_V2: str
+    LANGCHAIN_ENDPOINT: str
+
+    _instance: ClassVar[Optional["Config"]] = None
+
+    @classmethod
+    def get_instance(cls):
+        if cls._instance is None:
+            cls._instance = cls(**init_config())
+        return cls._instance
 
 
-# Function to load the configuration
-def load_config():
-    global config
-    config = init_config()
-
-
-# In non-test environments, load the config immediately
-if not os.getenv("PYTEST_CURRENT_TEST"):
-    load_config()
+config: Config = Config.get_instance()

@@ -18,6 +18,7 @@ from knowledgenest.auth.schema import (
     TokenIn,
     UserSettings,
     UserOut,
+    LoginOut,
 )
 from starlette.responses import Response
 
@@ -25,7 +26,7 @@ auth_router = APIRouter(prefix="/auth", tags=["authentication"])
 users_router = APIRouter(prefix="/users", tags=["users"])
 
 
-@auth_router.post("/login")
+@auth_router.post("/login", response_model=LoginOut)
 def login(db: DbSession, request: OAuth2PasswordRequestForm = Depends()):
     user = get_user_by_email(request.username, db)
     if not verify_hash(request.password, user.password):
@@ -33,12 +34,14 @@ def login(db: DbSession, request: OAuth2PasswordRequestForm = Depends()):
             status_code=status.HTTP_404_NOT_FOUND, detail="Bad credentials"
         )
 
-    access_token = create_access_token(data={"username": request.username})
+    access_token, expiration_time = create_access_token(
+        data={"username": request.username}
+    )
 
     return {
         "access_token": access_token,
-        "token-type": "bearer",
-        "email": request.username,
+        "email": user.email,
+        "token_expiration_time": expiration_time,
     }
 
 

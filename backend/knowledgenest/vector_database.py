@@ -7,8 +7,8 @@ import time
 
 from knowledgenest.config import config
 
-PINECONE_API_KEY = config["PINECONE_API_KEY"]
-PINECONE_INDEX_NAME = config["PINECONE_INDEX_NAME"]
+PINECONE_API_KEY = config.PINECONE_API_KEY
+PINECONE_INDEX_NAME = config.PINECONE_INDEX_NAME
 
 EMBEDDING_MODEL_DIM = 1024
 SIM_METRIC = "dotproduct"

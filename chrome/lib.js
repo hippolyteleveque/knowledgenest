@@ -9,8 +9,9 @@ export function login(formData) {
   })
     .then((response) => response.json())
     .then((data) => {
-      if (data["access_token"]) {
-        chrome.storage.sync.set({ "kn-jwtToken": data["access_token"] });
+      if (data["access_token"] && data["token_expiration_time"]) {
+        console.log(data["token_expiration_time"])
+        chrome.storage.sync.set({ "kn-jwtToken": data["access_token"], "kn-token-exp": data["token_expiration_time"]});
       } else {
         alert("Authentication failed");
       }
@@ -44,4 +45,10 @@ export function sendActiveUrl(token) {
         alert("Failed to send URL");
       });
   });
+}
+
+export function checkTokenValidity(exp) {
+  const now = Date.now();
+  const expTimestamp = new Date(exp).getTime();
+  return now < expTimestamp
 }
