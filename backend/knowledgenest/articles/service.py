@@ -13,7 +13,7 @@ from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_mistralai import MistralAIEmbeddings
 
 
-MISTRAL_EMBEDDING_MODEL = config["MISTRAL_EMBEDDING_MODEL"]
+MISTRAL_EMBEDDING_MODEL = config.MISTRAL_EMBEDDING_MODEL
 
 
 def process_new_article(url: str, user_id: UUID, db: Session):

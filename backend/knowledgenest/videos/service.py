@@ -11,7 +11,7 @@ from knowledgenest.videos.utils import extract_info_from_url
 from knowledgenest.config import config
 
 
-MISTRAL_EMBEDDING_MODEL = config["MISTRAL_EMBEDDING_MODEL"]
+MISTRAL_EMBEDDING_MODEL = config.MISTRAL_EMBEDDING_MODEL
 
 
 def fetch_videos(user_id: UUID, db: Session, offset: int = 0, limit: int = 10):
