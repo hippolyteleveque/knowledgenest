@@ -33,12 +33,15 @@ def login(db: DbSession, request: OAuth2PasswordRequestForm = Depends()):
             status_code=status.HTTP_404_NOT_FOUND, detail="Bad credentials"
         )
 
-    access_token = create_access_token(data={"username": request.username})
+    access_token, expiration_time = create_access_token(
+        data={"username": request.username}
+    )
 
     return {
         "access_token": access_token,
         "token-type": "bearer",
         "email": request.username,
+        "token_expiration_time": expiration_time,
     }
 
 
