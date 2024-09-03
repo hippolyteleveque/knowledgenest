@@ -1,4 +1,5 @@
-
+from knowledgenest.database import Base, get_db
+from knowledgenest.auth.service import create_access_token, create_user
 import pytest
 import os
 from unittest.mock import Mock, patch
@@ -6,7 +7,6 @@ from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from starlette.config import environ
-
 
 environ["OPENAI_API_KEY"] = "test_openai_key"
 environ["OPENAI_LLM_MODEL"] = "gpt-4o-mini"
@@ -21,8 +21,6 @@ environ["ENVIRONMENT"] = "TESTING"
 environ["LANGCHAIN_API_KEY"] = "test_langchain_api_key"
 environ["LANGCHAIN_PROJECT"] = "test_langchain_project"
 
-from knowledgenest.auth.service import create_access_token, create_user
-from knowledgenest.database import Base, get_db
 
 # Setup test database
 SQLALCHEMY_DATABASE_URL = "sqlite:///./test.db"
@@ -99,7 +97,7 @@ def test_created_user(test_user, db_session):
 
 @pytest.fixture
 def auth_headers(test_created_user):
-    access_token = create_access_token(
+    access_token, _ = create_access_token(
         data={"username": test_created_user["email"]})
     return {"Authorization": f"Bearer {access_token}"}
 

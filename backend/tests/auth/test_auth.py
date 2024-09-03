@@ -22,7 +22,7 @@ def test_login(test_user, client):
 
 
 def test_verify_token(client):
-    token = create_access_token(data={"username": "test@example.com"})
+    token, _ = create_access_token(data={"username": "test@example.com"})
     response = client.post("/auth/verify", json={"token": token})
     assert response.status_code == 200
 
