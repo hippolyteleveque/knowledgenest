@@ -19,6 +19,7 @@ MISTRAL_EMBEDDING_MODEL = config.MISTRAL_EMBEDDING_MODEL
 def process_new_article(url: str, user_id: UUID, db: Session):
     # First version, we only create the article in base,
     properties = extract_meta_properties(url)
+    properties.update({"url": url})
     fields = convert_properties_to_fields(properties)
     new_article = Article(**fields, user_id=user_id)
     db.add(new_article)
