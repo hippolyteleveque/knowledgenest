@@ -33,7 +33,15 @@ export async function sendActiveUrl(token) {
   try {
     const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
     const currentUrl = tabs[0].url;
-    const response = await fetch(`${API_HOST}/api/v1/articles/`, {
+    const youtubeUrlPattern =
+      /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.?be)\/.+$/;
+    let postUrl;
+    if (youtubeUrlPattern.test(currentUrl)) {
+      postUrl = `${API_HOST}/api/v1/videos/`;
+    } else {
+      postUrl = `${API_HOST}/api/v1/articles/`;
+    }
+    const response = await fetch(postUrl, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
