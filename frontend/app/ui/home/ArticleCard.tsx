@@ -13,15 +13,19 @@ export function ArticleCard({ article }: { article: Article }) {
   return (
     <Card className="max-w-[280px] flex flex-col">
       <CardContent className="p-4 pt-0 flex-grow">
-        <div className="relative w-full h-48 mb-2">
-          <Image
-            src={article.imageUrl}
-            alt={article.description}
-            fill
-            objectFit="cover"
-            className="rounded-md"
-          />
-        </div>
+        {/* // Quick fix  */}
+        {article.imageUrl ? (
+          <div className="relative w-full h-48 mb-2">
+            <Image
+              src={article.imageUrl}
+              alt={article.description}
+              fill
+              objectFit="cover"
+              className="rounded-md"
+            />
+          </div>
+        ) : null}
+
         <h4 className="scroll-m-20 text-sm font-semibold tracking-tight text-center line-clamp-2">
           {article.title}
         </h4>
