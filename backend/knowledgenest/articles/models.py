@@ -19,7 +19,7 @@ class Article(Base):
     )
     url: Mapped[str] = mapped_column(String, index=True)
     description: Mapped[str | None] = mapped_column(String, nullable=True)
-    imageUrl: Mapped[str] = mapped_column(String)
+    imageUrl: Mapped[str | None] = mapped_column(String, nullable=True)
     title: Mapped[str] = mapped_column(String)
 
     # relationships

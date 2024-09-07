@@ -51,17 +51,15 @@ export default function Chat(props: ChatProps) {
         setIsWaitingMessage((prevState) => false);
       } else {
         const data = JSON.parse(event.data);
-        if ("output" in data) {
-          setMessages((prevMessages) => {
-            const lastAiMessage = prevMessages[prevMessages.length - 1];
-            const newAiMessage = {
-              ...lastAiMessage,
-              message: lastAiMessage.message + data.output,
-            };
-            const previousMessages = prevMessages.slice(0, -1);
-            return [...previousMessages, newAiMessage];
-          });
-        }
+        setMessages((prevMessages) => {
+          const lastAiMessage = prevMessages[prevMessages.length - 1];
+          const newAiMessage = {
+            ...lastAiMessage,
+            message: lastAiMessage.message + data,
+          };
+          const previousMessages = prevMessages.slice(0, -1);
+          return [...previousMessages, newAiMessage];
+        });
       }
       if (chatRef.current) {
         chatRef.current.scrollTop = chatRef.current.scrollHeight;

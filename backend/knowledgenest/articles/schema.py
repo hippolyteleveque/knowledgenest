@@ -10,7 +10,7 @@ class ArticleUrlIn(BaseModel):
 class ArticleOut(BaseModel):
     id: UUID
     url: str
-    imageUrl: str
+    imageUrl: Optional[str]
     description: Optional[str]
     title: str
 
