@@ -1,2 +1,3 @@
-notebooks/
+notebooks/dev
 cloud
+*.ipynb_checkpoints
