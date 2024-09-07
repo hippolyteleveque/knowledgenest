@@ -49,12 +49,14 @@ export default function ChatSources(props: ChatSourcesProps) {
           <a href={source.url} className="py-5" key={source.id}>
             <Card>
               <CardContent className="flex justify-center">
-                <Image
-                  src={source.imageUrl}
-                  alt={source.description}
-                  width={200}
-                  height={150}
-                />
+                {source.imageUrl ? (
+                  <Image
+                    src={source.imageUrl}
+                    alt={source.description}
+                    width={200}
+                    height={150}
+                  />
+                ) : null}
               </CardContent>
               <h4 className="scroll-m-20 text-sm font-semibold tracking-tight text-center">
                 {source.title.slice(0, 30)}
