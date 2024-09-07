@@ -8,8 +8,9 @@ from knowledgenest.auth.models import User
 from knowledgenest.chat.models import ConversationContextArticle
 from knowledgenest.chat.models import ConversationContextVideo
 from knowledgenest.chat.models import ChatConversation, ChatMessage
-from knowledgenest.chat.utils import get_chain
+from knowledgenest.chat.utils import KNRag
 from datetime import datetime
+from langsmith import trace
 
 
 def fetch_conversation(
@@ -49,18 +50,18 @@ async def chat_stream(new_message: str, conversation_id: UUID, user: User, db: S
     db_conversation = fetch_conversation(conversation_id, user.id, db)
     # serialization
     messages = [msg.convert_to_langchain() for msg in db_conversation.ordered_messages]
-    chain = get_chain(user)
-    resp = chain.astream(dict(messages=messages))
-    total_message = ""
-    async for chunk in resp:
-        if "sources" in chunk:
-            # Add all sources to the conversation
-            for source in chunk["sources"]:
-                add_new_source(
-                    conversation_id, source["id"], source["type"], source["score"], db
-                )
-        elif "output" in chunk:
-            total_message += chunk["output"]
+    bot = KNRag(user.setting.ai_provider, {"user_id": str(user.id)})
+    # A bit hacky for tracing correctly to langsmith
+    with trace("Chat", inputs={"message": messages[-1]}):
+        answer = bot.answer(dict(messages=messages))
+        for source in answer["sources"]:
+            # Add all sources
+            add_new_source(
+                conversation_id, source["id"], source["type"], source["score"], db
+            )
+        total_message = ""
+        async for chunk in answer["output"]:
+            total_message += chunk
             yield chunk
     add_ai_message(total_message, conversation_id, db)
 
