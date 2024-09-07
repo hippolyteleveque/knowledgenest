@@ -1,8 +1,7 @@
-from operator import itemgetter
 from typing import Dict, List
 
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
-from langchain_core.runnables import Runnable, RunnableParallel, RunnableLambda
+from langchain_core.runnables import Runnable
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.vectorstores import VectorStore
 from langchain_mistralai import ChatMistralAI, MistralAIEmbeddings
@@ -25,89 +24,88 @@ SYSTEM_PROMPT = """You are a useful assistant that answers politey to users ques
             you primarily based on the below context when it is useful :\n\n{context}"""
 
 
-def create_retriever(vectorstore: VectorStore, filter: Dict) -> Runnable:
-    """Create and returns a retriever with the specified filters"""
+class KNRag:
 
-    @chain
-    def retrieve(query: str) -> List[Document]:
-        if results := vectorstore.similarity_search_with_score(
-            query, k=3, filter=filter
-        ):
-            docs, scores = zip(*results)
-            for doc, score in zip(docs, scores):
-                doc.metadata["score"] = score
+    def __init__(self, provider: str, filter: Dict[str, str]):
+        self._filter = filter
+        self._provider = provider
+        self._retriever = self._init_retriever()
+        self._llm = self._init_llm()
 
-            return list(docs)
-        return []
+    def answer(self, params: dict):
+        docs = self._retriever.invoke(params)
+        sources = self._parse_sources(docs)
+        formatted_docs = self._format_docs(docs)
+        output = self._llm.astream(dict(**params, context=formatted_docs))
+        return {"sources": sources, "output": output}
 
-    return retrieve
+    def _init_retriever(self):
+        index = get_vector_db()
+        embeddings = MistralAIEmbeddings(model="mistral-embed")
+        vector_store = PineconeVectorStore(index=index, embedding=embeddings)
+        retriever = self._create_retriever(vector_store, self._filter)
 
+        retriever_chain = self._parse_retriever_input | retriever
+        return retriever_chain
 
-def get_chain(user):
-    prompt = ChatPromptTemplate.from_messages(
-        [
-            ("system", SYSTEM_PROMPT),
-            MessagesPlaceholder(variable_name="messages"),
-        ]
-    )
-    index = get_vector_db()
-    llm = get_llm(user.setting.ai_provider)
-    # We always embed with mistral for index consistency
-    embeddings = MistralAIEmbeddings(model=MISTRAL_EMBEDDING_MODEL)
-    vector_store = PineconeVectorStore(index=index, embedding=embeddings)
-    retriever = create_retriever(vector_store, dict(user_id=str(user.id)))
-    chain = (
-        dict(docs=parse_retriever_input | retriever, messages=itemgetter("messages"))
-        | RunnableParallel(
-            context=itemgetter("docs") | RunnableLambda(format_docs),
-            messages=itemgetter("messages"),
-            sources=itemgetter("docs") | RunnableLambda(parse_sources),
+    def _init_llm(self):
+        llm = self._get_llm(self._provider)
+        prompt = ChatPromptTemplate.from_messages(
+            [
+                ("system", SYSTEM_PROMPT),
+                MessagesPlaceholder(variable_name="messages"),
+            ]
         )
-        | RunnableParallel(
-            prompt=prompt,
-            sources=itemgetter("sources"),
-        )
-        | RunnableParallel(
-            output=itemgetter("prompt") | llm | StrOutputParser(),
-            sources=itemgetter("sources"),
-        )
-    )
-    return chain
+        llm_chain = prompt | llm | StrOutputParser()
+        return llm_chain
 
+    def _format_docs(self, docs):
+        return "\n\n".join(doc.page_content for doc in docs)
 
-def format_docs(docs):
-    return "\n\n".join(doc.page_content for doc in docs)
+    def _parse_retriever_input(self, params: Dict):
+        return params["messages"][-1].content
 
+    def _parse_sources(self, docs: List[Document]) -> List[Dict]:
+        """Extract unique sources with useful information"""
+        sources = {}
+        for doc in docs:
+            doc_id = doc.metadata["content_id"]
+            if doc_id not in sources:
+                sources[doc_id] = {
+                    "id": doc_id,
+                    "type": doc.metadata["type"],
+                    "score": doc.metadata["score"],
+                }
 
-def parse_retriever_input(params: Dict):
-    return params["messages"][-1].content
+            elif sources[doc_id]["score"] < doc.metadata["score"]:
+                # We take the best score of each document
+                sources[doc_id]["score"] = doc.metadata["score"]
+        return list(sources.values())
 
+    def _create_retriever(self, vectorstore: VectorStore, filter: Dict) -> Runnable:
+        """Create and returns a retriever with the specified filters"""
 
-def parse_sources(docs: List[Document]) -> List[Dict]:
-    """Extract unique sources with useful information"""
-    sources = {}
-    for doc in docs:
-        doc_id = doc.metadata["content_id"]
-        if doc_id not in sources:
-            sources[doc_id] = {
-                "id": doc_id,
-                "type": doc.metadata["type"],
-                "score": doc.metadata["score"],
-            }
+        @chain
+        def retrieve(query: str) -> List[Document]:
+            if results := vectorstore.similarity_search_with_score(
+                query, k=3, filter=filter
+            ):
+                docs, scores = zip(*results)
+                for doc, score in zip(docs, scores):
+                    doc.metadata["score"] = score
 
-        elif sources[doc_id]["score"] < doc.metadata["score"]:
-            # We take the best score of each document
-            sources[doc_id]["score"] = doc.metadata["score"]
-    return list(sources.values())
+                return list(docs)
+            return []
 
+        return retrieve
 
-def get_llm(ai_provider: str) -> Runnable:
-    """Returns the langchain runnable llm based on the config"""
-    if ai_provider == "mistral":
-        return ChatMistralAI(model_name=MISTRAL_LLM_MODEL)
-    elif ai_provider == "anthropic":
-        return ChatAnthropic(model=ANTHROPIC_LLM_MODEL)
-    elif ai_provider == "openai":
-        return ChatOpenAI(model=OPENAI_LLM_MODEL)
-    else:
-        raise ValueError("Unknown provider {ai_provider}")
+    def _get_llm(self, ai_provider: str) -> Runnable:
+        """Returns the langchain runnable llm based on the config"""
+        if ai_provider == "mistral":
+            return ChatMistralAI(model_name=MISTRAL_LLM_MODEL)
+        elif ai_provider == "anthropic":
+            return ChatAnthropic(model=ANTHROPIC_LLM_MODEL)
+        elif ai_provider == "openai":
+            return ChatOpenAI(model=OPENAI_LLM_MODEL)
+        else:
+            raise ValueError("Unknown provider {ai_provider}")
