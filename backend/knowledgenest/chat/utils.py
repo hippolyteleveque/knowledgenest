@@ -1,4 +1,4 @@
-from typing import Dict, List
+from typing import Dict, List, Optional
 
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_core.runnables import Runnable
@@ -10,6 +10,7 @@ from langchain_anthropic import ChatAnthropic
 from langchain_pinecone import PineconeVectorStore
 from langchain_core.documents import Document
 from langchain_core.runnables import chain
+from pinecone import Index
 
 from knowledgenest.vector_database import get_vector_db
 from knowledgenest.config import config
@@ -26,23 +27,33 @@ SYSTEM_PROMPT = """You are a useful assistant that answers politey to users ques
 
 class KNRag:
 
-    def __init__(self, provider: str, filter: Dict[str, str]):
+    def __init__(
+        self,
+        provider: str,
+        filter: Optional[Dict[str, str]] = None,
+        pc_idx: Optional[Index] = None,
+    ):
         self._filter = filter
         self._provider = provider
+        self._pc_idx = pc_idx
         self._retriever = self._init_retriever()
         self._llm = self._init_llm()
 
-    def answer(self, params: dict):
+    def answer(self, params: dict, stream=True):
         docs = self._retriever.invoke(params)
         sources = self._parse_sources(docs)
         formatted_docs = self._format_docs(docs)
-        output = self._llm.astream(dict(**params, context=formatted_docs))
+        if stream:
+            output = self._llm.astream(dict(**params, context=formatted_docs))
+        else:
+            output = self._llm.invoke(dict(**params, context=formatted_docs))
         return {"sources": sources, "output": output}
 
     def _init_retriever(self):
-        index = get_vector_db()
+        if self._pc_idx is None:
+            self._pc_idx = get_vector_db()
         embeddings = MistralAIEmbeddings(model="mistral-embed")
-        vector_store = PineconeVectorStore(index=index, embedding=embeddings)
+        vector_store = PineconeVectorStore(index=self._pc_idx, embedding=embeddings)
         retriever = self._create_retriever(vector_store, self._filter)
 
         retriever_chain = self._parse_retriever_input | retriever
@@ -82,7 +93,9 @@ class KNRag:
                 sources[doc_id]["score"] = doc.metadata["score"]
         return list(sources.values())
 
-    def _create_retriever(self, vectorstore: VectorStore, filter: Dict) -> Runnable:
+    def _create_retriever(
+        self, vectorstore: VectorStore, filter: Dict | None
+    ) -> Runnable:
         """Create and returns a retriever with the specified filters"""
 
         @chain
