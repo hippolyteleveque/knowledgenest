@@ -2,6 +2,7 @@ from langchain_community.document_loaders.web_base import WebBaseLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_mistralai import MistralAIEmbeddings
 from langchain_community.document_loaders import YoutubeLoader
+from pinecone import Pinecone
 
 MISTRAL_EMBEDDING_MODEL = "mistral-embed"
 
@@ -52,5 +53,9 @@ def process_video_doc(url, doc, i: int):
     pc_obj["values"] = embeddings.embed_documents([doc.page_content])[0]
     pc_obj["id"] = f"{url}_{i}"
     return pc_obj
+
+def delete_index(api_key: str, idx_name: str):
+    pc = Pinecone(api_key=api_key)
+    pc.delete_index(idx_name)
 
 
