@@ -1,0 +1,12 @@
+config:
+  aws:region: eu-west-3
+  ops:ami:
+    secure: AAABAEUPaBwr+TcRxo+Jp9sfsb/pLTekvDovKtCI7yXInSsgwQgD7QydBS6N1kycjyU9/bI=
+  ops:certificate:
+    secure: AAABAKDYO2XQvkAkmrghIM+nvHxgfL3HRBVKci4+swjZdHSAQ1tS9dKLaiwTscknPxI4OleGQwjAF97mnyFB6rRB2fNCF9LlCqfSPGZE8tqcsO0AM7GnhZDaLKi6B0ygpU7vTcRfYeE1ti1VxY6KyXQjCQ==
+  ops:keyName:
+    secure: AAABAMvWeim7vyF3TC6H7YOT24Lo1PdY+sOI2kufgclENpRsdM51Ed6W
+  ops:pgPassword:
+    secure: AAABAHvYn7q1dEWZC4cwFRPIEQFafK5gezuolayXuK4HNy0iYk1COlj4b1HhDw==
+  ops:pgUsername:
+    secure: AAABAEzMglvwLsvgy1GfLBAvzO7H6vjNvw3TIB+7gWwOix+5ppaSVw==
